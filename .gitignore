@@ -1,0 +1,80 @@
+# Dependencies
+node_modules
+*/node_modules
+**/node_modules
+**/node_modules/**
+package-lock.json
+yarn.lock
+
+# Next.js specific
+.next/
+**/.next/
+**/.next/**
+.next/cache/
+**/.next/cache/
+**/.next/cache/webpack/
+frontend/.next/
+frontend/.next/**
+frontend/node_modules/@next/
+frontend/.next/cache/webpack/client-production/
+frontend/.next/cache/webpack/server-production/
+
+# Build outputs
+dist
+build
+out
+*.pack
+*.node
+
+# Environment
+.env
+.env.*
+.env.local
+.env.*.local
+
+# IDE
+.idea
+.vscode
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Debug
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+*.log
+
+# Laravel
+/backend/vendor
+/backend/public/hot
+/backend/public/storage
+/backend/storage/*.key
+/backend/storage/framework/cache/*
+/backend/storage/framework/sessions/*
+/backend/storage/framework/views/*
+/backend/storage/logs/*
+/backend/.env
+/backend/.env.backup
+/backend/.phpunit.result.cache
+/backend/docker-compose.override.yml
+/backend/Homestead.json
+/backend/Homestead.yaml
+
+# Cache
+.cache
+**/.cache
+
+# Large binary files
+*.pack
+*.node
+frontend/node_modules/@next/swc-darwin-arm64/next-swc.darwin-arm64.node
+
+# Misc
+*.pem
