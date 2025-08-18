@@ -1,6 +1,6 @@
 "use client"
 
-import { useState, useEffect } from "react"
+import { useState, useEffect, Suspense } from "react"
 import Link from "next/link"
 import { useRouter, useSearchParams } from "next/navigation"
 import { useForm } from "react-hook-form"
@@ -21,12 +21,27 @@ const loginSchema = z.object({
 
 type LoginFormData = z.infer<typeof loginSchema>
 
-export default function LoginPage() {
+// Composant séparé pour gérer le message de succès avec useSearchParams
+function SuccessMessage({ onMessageSet }: { onMessageSet: (message: string | null) => void }) {
+  const searchParams = useSearchParams()
+
+  useEffect(() => {
+    const message = searchParams.get('message')
+    if (message) {
+      onMessageSet(message)
+      // Auto-hide message after 5 seconds
+      setTimeout(() => onMessageSet(null), 5000)
+    }
+  }, [searchParams, onMessageSet])
+
+  return null
+}
+
+function LoginForm() {
   const [isLoading, setIsLoading] = useState(false)
   const [showPassword, setShowPassword] = useState(false)
   const [successMessage, setSuccessMessage] = useState<string | null>(null)
   const router = useRouter()
-  const searchParams = useSearchParams()
 
   const {
     register,
@@ -35,15 +50,6 @@ export default function LoginPage() {
   } = useForm<LoginFormData>({
     resolver: zodResolver(loginSchema),
   })
-
-  useEffect(() => {
-    const message = searchParams.get('message')
-    if (message) {
-      setSuccessMessage(message)
-      // Auto-hide message after 5 seconds
-      setTimeout(() => setSuccessMessage(null), 5000)
-    }
-  }, [searchParams])
 
   const onSubmit = async (data: LoginFormData) => {
     setIsLoading(true)
@@ -60,11 +66,15 @@ export default function LoginPage() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-50 via-white to-gray-100 flex items-center justify-center p-4">
+    <>
+      <Suspense fallback={null}>
+        <SuccessMessage onMessageSet={setSuccessMessage} />
+      </Suspense>
+      <div className="flex justify-center items-center p-4 min-h-screen bg-gradient-to-br from-gray-50 via-white to-gray-100">
       {/* Background decorations */}
-      <div className="absolute inset-0 overflow-hidden">
-        <div className="absolute top-20 left-10 w-72 h-72 bg-senegal-green/10 rounded-full blur-3xl" />
-        <div className="absolute bottom-20 right-10 w-96 h-96 bg-senegal-yellow/10 rounded-full blur-3xl" />
+      <div className="overflow-hidden absolute inset-0">
+        <div className="absolute left-10 top-20 w-72 h-72 rounded-full blur-3xl bg-senegal-green/10" />
+        <div className="absolute right-10 bottom-20 w-96 h-96 rounded-full blur-3xl bg-senegal-yellow/10" />
       </div>
 
       <motion.div
@@ -73,10 +83,10 @@ export default function LoginPage() {
         transition={{ duration: 0.5 }}
         className="relative w-full max-w-md"
       >
-        <Card className="glass border-white/20 shadow-2xl">
+        <Card className="shadow-2xl glass border-white/20">
           <CardHeader className="text-center">
             <div className="flex justify-center mb-4">
-              <div className="w-12 h-12 bg-gradient-to-r from-senegal-green to-senegal-yellow rounded-full flex items-center justify-center">
+              <div className="flex justify-center items-center w-12 h-12 bg-gradient-to-r rounded-full from-senegal-green to-senegal-yellow">
                 <Car className="w-6 h-6 text-white" />
               </div>
             </div>
@@ -93,16 +103,16 @@ export default function LoginPage() {
                 initial={{ opacity: 0, y: -10 }}
                 animate={{ opacity: 1, y: 0 }}
                 exit={{ opacity: 0, y: -10 }}
-                className="mb-6 p-4 bg-senegal-green/10 border border-senegal-green/20 rounded-lg flex items-center gap-3"
+                className="flex gap-3 items-center p-4 mb-6 rounded-lg border bg-senegal-green/10 border-senegal-green/20"
               >
-                <CheckCircle className="w-5 h-5 text-senegal-green flex-shrink-0" />
-                <p className="text-senegal-green text-sm font-medium">{successMessage}</p>
+                <CheckCircle className="flex-shrink-0 w-5 h-5 text-senegal-green" />
+                <p className="text-sm font-medium text-senegal-green">{successMessage}</p>
               </motion.div>
             )}
             <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
               {/* Email */}
               <div className="space-y-2">
-                <Label htmlFor="email" className="flex items-center gap-2">
+                <Label htmlFor="email" className="flex gap-2 items-center">
                   <Mail className="w-4 h-4 text-senegal-green" />
                   Adresse email
                 </Label>
@@ -121,7 +131,7 @@ export default function LoginPage() {
 
               {/* Password */}
               <div className="space-y-2">
-                <Label htmlFor="password" className="flex items-center gap-2">
+                <Label htmlFor="password" className="flex gap-2 items-center">
                   <Lock className="w-4 h-4 text-senegal-green" />
                   Mot de passe
                 </Label>
@@ -137,7 +147,7 @@ export default function LoginPage() {
                   <button
                     type="button"
                     onClick={() => setShowPassword(!showPassword)}
-                    className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-500 hover:text-gray-700"
+                    className="absolute right-3 top-1/2 text-gray-500 transform -translate-y-1/2 hover:text-gray-700"
                   >
                     {showPassword ? (
                       <EyeOff className="w-4 h-4" />
@@ -152,7 +162,7 @@ export default function LoginPage() {
               </div>
 
               {/* Remember me & Forgot password */}
-              <div className="flex items-center justify-between text-sm">
+              <div className="flex justify-between items-center text-sm">
                 <label className="flex items-center space-x-2">
                   <input
                     type="checkbox"
@@ -162,7 +172,7 @@ export default function LoginPage() {
                 </label>
                 <Link
                   href="/forgot-password"
-                  className="text-senegal-green hover:text-senegal-green/80 font-medium"
+                  className="font-medium text-senegal-green hover:text-senegal-green/80"
                 >
                   Mot de passe oublié ?
                 </Link>
@@ -187,7 +197,7 @@ export default function LoginPage() {
             </form>
 
             {/* Divider */}
-            <div className="mt-6 flex items-center">
+            <div className="flex items-center mt-6">
               <div className="flex-1 border-t border-gray-300" />
               <span className="px-4 text-sm text-gray-500">Ou</span>
               <div className="flex-1 border-t border-gray-300" />
@@ -196,7 +206,7 @@ export default function LoginPage() {
             {/* Social login */}
             <div className="mt-6 space-y-3">
               <Button variant="outline" className="w-full" disabled={isLoading}>
-                <svg className="w-5 h-5 mr-2" viewBox="0 0 24 24">
+                <svg className="mr-2 w-5 h-5" viewBox="0 0 24 24">
                   <path
                     fill="currentColor"
                     d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"
@@ -219,11 +229,11 @@ export default function LoginPage() {
             </div>
 
             {/* Sign up link */}
-            <div className="mt-6 text-center text-sm">
+            <div className="mt-6 text-sm text-center">
               <span className="text-gray-600">Vous n&apos;avez pas de compte ? </span>
               <Link
                 href="/register"
-                className="text-senegal-green hover:text-senegal-green/80 font-medium"
+                className="font-medium text-senegal-green hover:text-senegal-green/80"
               >
                 Créer un compte
               </Link>
@@ -232,5 +242,10 @@ export default function LoginPage() {
         </Card>
       </motion.div>
     </div>
+    </>
   )
+}
+
+export default function LoginPage() {
+  return <LoginForm />
 }

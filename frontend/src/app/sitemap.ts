@@ -9,7 +9,13 @@ interface Vehicle {
 
 async function getVehicles(): Promise<Vehicle[]> {
   try {
-    const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/vehicles`, {
+    const apiUrl = process.env.NEXT_PUBLIC_API_URL
+    if (!apiUrl) {
+      console.warn('NEXT_PUBLIC_API_URL not defined, skipping vehicle fetch for sitemap')
+      return []
+    }
+    
+    const response = await fetch(`${apiUrl}/vehicles`, {
       next: { revalidate: 3600 } // Revalidate every hour
     })
     
