@@ -28,107 +28,118 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { VehicleCard } from "@/components/ui/vehicle-card"
 import { Currency } from "@/components/ui/currency"
 import { Vehicle, VehicleCategory, TransmissionType, FuelType } from "@/types"
+import { useVehicle, useVehicles } from "@/hooks/useVehicles"
 
-// Mock data pour le développement
-const mockVehicle: Vehicle = {
-  id: "1",
-  name: "Toyota Corolla",
-  brand: "Toyota",
-  model: "Corolla",
-  year: 2023,
-  category: VehicleCategory.ECONOMY,
-  transmission: TransmissionType.AUTOMATIC,
-  fuelType: FuelType.GASOLINE,
-  seats: 5,
-  doors: 5,
-  airConditioning: true,
-  pricePerDay: 15000,
-  images: [
-    "https://images.unsplash.com/photo-1560958089-b8a1929cea89?w=800&h=600&fit=crop&crop=center",
-    "https://images.unsplash.com/photo-1552519507-da3b142c6e3d?w=800&h=600&fit=crop&crop=center",
-    "https://images.unsplash.com/photo-1609521263047-f8f205293f24?w=800&h=600&fit=crop&crop=center",
-    "https://images.unsplash.com/photo-1618843479313-40f8afb4b4d8?w=800&h=600&fit=crop&crop=center"
-  ],
-  description: "Toyota Corolla 2023 en excellent état, parfaite pour vos déplacements en ville comme pour les longs trajets. Véhicule fiable, économique en carburant et très confortable. Idéal pour les professionnels et les familles.",
-  features: [
-    "Climatisation automatique",
-    "Direction assistée",
-    "Verrouillage centralisé", 
-    "Airbags frontaux et latéraux",
-    "Système audio Bluetooth",
-    "USB et prise 12V",
-    "Régulateur de vitesse",
-    "Ordinateur de bord",
-    "Rétroviseurs électriques",
-    "Vitres électriques"
-  ],
-  isAvailable: true,
-  location: "Dakar",
-  createdAt: new Date(),
-  updatedAt: new Date()
-}
-
-const mockSimilarVehicles: Partial<Vehicle>[] = [
-  {
-    id: "2",
-    name: "Nissan Sentra",
-    brand: "Nissan",
-    model: "Sentra", 
-    year: 2023,
-    category: VehicleCategory.ECONOMY,
-    transmission: TransmissionType.AUTOMATIC,
-    fuelType: FuelType.GASOLINE,
-    seats: 5,
-    pricePerDay: 16000,
-    images: ["https://images.unsplash.com/photo-1552519507-da3b142c6e3d?w=600&h=400&fit=crop&crop=center"],
-    isAvailable: true,
-    location: "Dakar",
-  },
-  {
-    id: "3", 
-    name: "Hyundai Accent",
-    brand: "Hyundai",
-    model: "Accent",
-    year: 2023,
-    category: VehicleCategory.COMPACT,
-    transmission: TransmissionType.MANUAL,
-    fuelType: FuelType.GASOLINE,
-    seats: 5,
-    pricePerDay: 14000,
-    images: ["https://images.unsplash.com/photo-1609521263047-f8f205293f24?w=600&h=400&fit=crop&crop=center"],
-    isAvailable: true,
-    location: "Dakar",
-  }
-]
-
-const specifications = [
-  { label: "Marque", value: "Toyota" },
-  { label: "Modèle", value: "Corolla" },
-  { label: "Année", value: "2023" },
-  { label: "Kilométrage", value: "12,000 km" },
-  { label: "Carburant", value: "Essence" },
-  { label: "Transmission", value: "Automatique" },
-  { label: "Nombre de places", value: "5" },
-  { label: "Nombre de portes", value: "5" },
-  { label: "Consommation", value: "6.5L/100km" },
-  { label: "Réservoir", value: "50L" },
-]
 
 export default function VehicleDetailPage() {
   const params = useParams()
+  const vehicleId = params.id as string
+  
   const [currentImageIndex, setCurrentImageIndex] = useState(0)
   const [isImageModalOpen, setIsImageModalOpen] = useState(false)
   const [isWishlisted, setIsWishlisted] = useState(false)
+  
+  // Fetch vehicle details from API
+  const { vehicle, loading, error } = useVehicle(vehicleId)
+  
+  // Fetch similar vehicles
+  const { vehicles: similarVehicles } = useVehicles({
+    category: vehicle?.category,
+    limit: 3
+  })
+  
+  // Filter out the current vehicle from similar vehicles
+  const filteredSimilarVehicles = similarVehicles.filter(v => v.id !== vehicleId).slice(0, 2)
 
   const nextImage = () => {
+    if (!vehicle?.images) return
     setCurrentImageIndex((prev) => 
-      prev === mockVehicle.images.length - 1 ? 0 : prev + 1
+      prev === vehicle.images.length - 1 ? 0 : prev + 1
     )
   }
 
   const prevImage = () => {
+    if (!vehicle?.images) return
     setCurrentImageIndex((prev) => 
-      prev === 0 ? mockVehicle.images.length - 1 : prev - 1
+      prev === 0 ? vehicle.images.length - 1 : prev - 1
+    )
+  }
+  
+  // Generate specifications from vehicle data
+  const specifications = vehicle ? [
+    { label: "Marque", value: vehicle.brand },
+    { label: "Modèle", value: vehicle.model },
+    { label: "Année", value: vehicle.year.toString() },
+    { label: "Kilométrage", value: vehicle.mileage ? `${vehicle.mileage.toLocaleString()} km` : "N/A" },
+    { label: "Carburant", value: vehicle.fuelType === 'gasoline' ? 'Essence' : vehicle.fuelType === 'diesel' ? 'Diesel' : 'Hybride' },
+    { label: "Transmission", value: vehicle.transmission === 'automatic' ? 'Automatique' : 'Manuelle' },
+    { label: "Nombre de places", value: vehicle.seats.toString() },
+    { label: "Nombre de portes", value: vehicle.doors ? vehicle.doors.toString() : "N/A" },
+    { label: "Climatisation", value: vehicle.airConditioning ? "Oui" : "Non" },
+    { label: "Lieu", value: vehicle.location },
+  ] : []
+
+  // Loading state
+  if (loading) {
+    return (
+      <MainLayout>
+        <div className="bg-gray-50 min-h-screen flex items-center justify-center">
+          <div className="flex items-center space-x-4">
+            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-senegal-green"></div>
+            <span className="text-gray-600">Chargement du véhicule...</span>
+          </div>
+        </div>
+      </MainLayout>
+    )
+  }
+
+  // Error state
+  if (error) {
+    return (
+      <MainLayout>
+        <div className="bg-gray-50 min-h-screen flex items-center justify-center">
+          <div className="text-center">
+            <div className="w-16 h-16 mx-auto mb-4 bg-red-100 rounded-full flex items-center justify-center">
+              <svg className="w-8 h-8 text-red-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+              </svg>
+            </div>
+            <h3 className="text-lg font-semibold text-gray-900 mb-2">
+              Véhicule introuvable
+            </h3>
+            <p className="text-gray-600 mb-6">
+              {error}
+            </p>
+            <div className="flex gap-4 justify-center">
+              <Link href="/catalogue">
+                <Button variant="outline">Voir le catalogue</Button>
+              </Link>
+              <Button onClick={() => window.location.reload()}>Réessayer</Button>
+            </div>
+          </div>
+        </div>
+      </MainLayout>
+    )
+  }
+
+  // Vehicle not found
+  if (!vehicle) {
+    return (
+      <MainLayout>
+        <div className="bg-gray-50 min-h-screen flex items-center justify-center">
+          <div className="text-center">
+            <h3 className="text-lg font-semibold text-gray-900 mb-2">
+              Véhicule introuvable
+            </h3>
+            <p className="text-gray-600 mb-6">
+              Le véhicule demandé n'existe pas ou n'est plus disponible.
+            </p>
+            <Link href="/catalogue">
+              <Button>Voir le catalogue</Button>
+            </Link>
+          </div>
+        </div>
+      </MainLayout>
     )
   }
 
@@ -143,7 +154,7 @@ export default function VehicleDetailPage() {
               <span>/</span>
               <Link href="/catalogue" className="hover:text-senegal-green">Catalogue</Link>
               <span>/</span>
-              <span className="text-gray-900">{mockVehicle.name}</span>
+              <span className="text-gray-900">{vehicle?.name || 'Chargement...'}</span>
             </div>
           </div>
         </div>
@@ -203,7 +214,7 @@ export default function VehicleDetailPage() {
 
                       {/* Image Indicator */}
                       <div className="absolute bottom-4 left-1/2 -translate-x-1/2 flex gap-2">
-                        {mockVehicle.images.map((_, index) => (
+                        {vehicle.images.map((_, index) => (
                           <button
                             key={index}
                             onClick={() => setCurrentImageIndex(index)}
@@ -216,8 +227,8 @@ export default function VehicleDetailPage() {
 
                       {/* Availability Badge */}
                       <div className="absolute top-4 left-4">
-                        <Badge variant={mockVehicle.isAvailable ? "default" : "destructive"}>
-                          {mockVehicle.isAvailable ? "Disponible" : "Indisponible"}
+                        <Badge variant={vehicle.isAvailable ? "default" : "destructive"}>
+                          {vehicle.isAvailable ? "Disponible" : "Indisponible"}
                         </Badge>
                       </div>
                     </div>
@@ -225,7 +236,7 @@ export default function VehicleDetailPage() {
                     {/* Thumbnail Gallery */}
                     <div className="p-4">
                       <div className="flex gap-2 overflow-x-auto">
-                        {mockVehicle.images.map((image, index) => (
+                        {vehicle.images.map((image, index) => (
                           <button
                             key={index}
                             onClick={() => setCurrentImageIndex(index)}
@@ -258,9 +269,9 @@ export default function VehicleDetailPage() {
                   <CardHeader>
                     <div className="flex items-start justify-between">
                       <div>
-                        <CardTitle className="text-2xl">{mockVehicle.name}</CardTitle>
+                        <CardTitle className="text-2xl">{vehicle.name}</CardTitle>
                         <p className="text-gray-600 mt-1">
-                          {mockVehicle.brand} {mockVehicle.model} {mockVehicle.year}
+                          {vehicle.brand} {vehicle.model} {vehicle.year}
                         </p>
                         <div className="flex items-center gap-4 mt-3">
                           <div className="flex items-center gap-1">
@@ -270,7 +281,7 @@ export default function VehicleDetailPage() {
                           </div>
                           <div className="flex items-center gap-2 text-gray-600">
                             <MapPin className="w-4 h-4" />
-                            <span>{mockVehicle.location}</span>
+                            <span>{vehicle.location}</span>
                           </div>
                         </div>
                       </div>
@@ -291,7 +302,7 @@ export default function VehicleDetailPage() {
                   </CardHeader>
                   <CardContent>
                     <p className="text-gray-600 leading-relaxed">
-                      {mockVehicle.description}
+                      {vehicle.description || 'Aucune description disponible.'}
                     </p>
                   </CardContent>
                 </Card>
@@ -332,7 +343,7 @@ export default function VehicleDetailPage() {
                   </CardHeader>
                   <CardContent>
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-                      {mockVehicle.features.map((feature) => (
+                      {vehicle.features?.map((feature) => (
                         <div key={feature} className="flex items-center gap-2">
                           <Check className="w-4 h-4 text-senegal-green" />
                           <span>{feature}</span>
@@ -356,7 +367,7 @@ export default function VehicleDetailPage() {
                   <CardHeader>
                     <div className="text-center">
                       <div className="text-3xl font-bold text-senegal-green">
-                        <Currency amount={mockVehicle.pricePerDay} />
+                        <Currency amount={vehicle.pricePerDay} />
                       </div>
                       <div className="text-gray-600">par jour</div>
                     </div>
@@ -366,15 +377,15 @@ export default function VehicleDetailPage() {
                     <div className="grid grid-cols-2 gap-4 p-3 bg-gray-50 rounded-lg">
                       <div className="flex items-center gap-2 text-sm">
                         <Users className="w-4 h-4 text-senegal-green" />
-                        <span>{mockVehicle.seats} places</span>
+                        <span>{vehicle.seats} places</span>
                       </div>
                       <div className="flex items-center gap-2 text-sm">
                         <Car className="w-4 h-4 text-senegal-green" />
-                        <span>Automatique</span>
+                        <span>{vehicle.transmission === 'automatic' ? 'Automatique' : 'Manuelle'}</span>
                       </div>
                       <div className="flex items-center gap-2 text-sm">
                         <Fuel className="w-4 h-4 text-senegal-green" />
-                        <span>Essence</span>
+                        <span>{vehicle.fuelType === 'gasoline' ? 'Essence' : vehicle.fuelType === 'diesel' ? 'Diesel' : 'Hybride'}</span>
                       </div>
                       <div className="flex items-center gap-2 text-sm">
                         <Shield className="w-4 h-4 text-senegal-green" />
@@ -416,12 +427,12 @@ export default function VehicleDetailPage() {
 
                     {/* Booking Buttons */}
                     <div className="space-y-3">
-                      <Link href={`/booking/${mockVehicle.id}`}>
+                      <Link href={`/booking/${vehicle.id}`}>
                         <Button 
                           variant="default"
                           size="lg" 
                           className="w-full bg-senegal-green hover:bg-senegal-green/90"
-                          disabled={!mockVehicle.isAvailable}
+                          disabled={!vehicle.isAvailable}
                         >
                           Réserver maintenant
                         </Button>
@@ -460,8 +471,8 @@ export default function VehicleDetailPage() {
               Véhicules similaires
             </h2>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {mockSimilarVehicles.map((vehicle) => (
-                <VehicleCard key={vehicle.id} vehicle={vehicle} />
+              {filteredSimilarVehicles.map((similarVehicle) => (
+                <VehicleCard key={similarVehicle.id} vehicle={similarVehicle} />
               ))}
             </div>
           </motion.div>

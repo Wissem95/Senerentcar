@@ -33,6 +33,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
 import { Dialog, DialogTrigger } from "@/components/ui/dialog"
+import { useBookings, useUpdateBookingStatus } from "@/hooks/useBookings"
 
 moment.locale("fr")
 const localizer = momentLocalizer(moment)
@@ -52,50 +53,6 @@ interface Booking {
   paymentStatus: "pending" | "partial" | "paid" | "failed"
 }
 
-const mockBookings: Booking[] = [
-  {
-    id: "1",
-    bookingNumber: "SRC-20250815-0001",
-    customerName: "Amadou Diallo",
-    customerEmail: "amadou@example.com",
-    vehicleName: "Toyota Camry 2022",
-    startDate: new Date("2025-08-20T10:00:00"),
-    endDate: new Date("2025-08-25T18:00:00"),
-    status: "confirmed",
-    totalAmount: 225000,
-    pickupLocation: "Aéroport Dakar",
-    dropoffLocation: "Hôtel Radisson",
-    paymentStatus: "partial",
-  },
-  {
-    id: "2",
-    bookingNumber: "SRC-20250815-0002",
-    customerName: "Fatou Sow",
-    customerEmail: "fatou@example.com",
-    vehicleName: "Hyundai Tucson 2023",
-    startDate: new Date("2025-08-18T09:00:00"),
-    endDate: new Date("2025-08-22T17:00:00"),
-    status: "pending",
-    totalAmount: 200000,
-    pickupLocation: "Centre-ville Dakar",
-    dropoffLocation: "Aéroport Dakar",
-    paymentStatus: "pending",
-  },
-  {
-    id: "3",
-    bookingNumber: "SRC-20250815-0003",
-    customerName: "Ousmane Ba",
-    customerEmail: "ousmane@example.com",
-    vehicleName: "Mercedes E-Class",
-    startDate: new Date("2025-08-16T14:00:00"),
-    endDate: new Date("2025-08-19T12:00:00"),
-    status: "in_progress",
-    totalAmount: 300000,
-    pickupLocation: "Hôtel Teranga",
-    dropoffLocation: "Aéroport Dakar",
-    paymentStatus: "paid",
-  },
-]
 
 const getStatusBadge = (status: Booking["status"]) => {
   switch (status) {
@@ -155,10 +112,15 @@ const getPaymentStatusBadge = (status: Booking["paymentStatus"]) => {
 }
 
 export default function BookingsPage() {
-  const [bookings, setBookings] = useState<Booking[]>(mockBookings)
   const [viewMode, setViewMode] = useState<"calendar" | "table">("table")
   const [selectedStatus, setSelectedStatus] = useState<string>("all")
   const [calendarView, setCalendarView] = useState<View>("month")
+  
+  const { bookings, loading, error, refetch } = useBookings({
+    status: selectedStatus === 'all' ? undefined : selectedStatus
+  })
+  
+  const { updateStatus, loading: updateLoading } = useUpdateBookingStatus()
 
   // Transform bookings for calendar
   const calendarEvents = useMemo(
@@ -177,28 +139,25 @@ export default function BookingsPage() {
     [bookings, selectedStatus]
   )
 
+  const handleStatusUpdate = async (bookingId: string, status: Booking['status']) => {
+    try {
+      await updateStatus(bookingId, status)
+      refetch()
+    } catch (error) {
+      console.error('Error updating booking status:', error)
+    }
+  }
+
   const confirmBooking = (bookingId: string) => {
-    setBookings((prev) =>
-      prev.map((booking) =>
-        booking.id === bookingId ? { ...booking, status: "confirmed" } : booking
-      )
-    )
+    handleStatusUpdate(bookingId, 'confirmed')
   }
 
   const cancelBooking = (bookingId: string) => {
-    setBookings((prev) =>
-      prev.map((booking) =>
-        booking.id === bookingId ? { ...booking, status: "cancelled" } : booking
-      )
-    )
+    handleStatusUpdate(bookingId, 'cancelled')
   }
 
   const startBooking = (bookingId: string) => {
-    setBookings((prev) =>
-      prev.map((booking) =>
-        booking.id === bookingId ? { ...booking, status: "in_progress" } : booking
-      )
-    )
+    handleStatusUpdate(bookingId, 'in_progress')
   }
 
   const columns: ColumnDef<Booking>[] = useMemo(

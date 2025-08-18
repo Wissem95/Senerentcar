@@ -21,39 +21,18 @@ import { DataTable } from "@/components/ui/data-table"
 import { DashboardChart } from "@/components/charts/dashboard-chart"
 import { RecentBookings } from "@/components/admin/recent-bookings"
 import { MaintenanceAlerts } from "@/components/admin/maintenance-alerts"
+import { useDashboardStats } from "@/hooks/useDashboard"
 
-interface DashboardStats {
-  totalRevenue: number
-  totalBookings: number
-  activeVehicles: number
-  totalUsers: number
-  revenueGrowth: number
-  bookingGrowth: number
-  vehicleUtilization: number
-  customerSatisfaction: number
-}
-
-const mockStats: DashboardStats = {
-  totalRevenue: 2850000,
-  totalBookings: 156,
-  activeVehicles: 24,
-  totalUsers: 89,
-  revenueGrowth: 12.5,
-  bookingGrowth: 8.3,
-  vehicleUtilization: 78.5,
-  customerSatisfaction: 4.7,
-}
 
 export default function AdminDashboard() {
-  const [stats, setStats] = useState<DashboardStats>(mockStats)
-  const [loading, setLoading] = useState(false)
+  const { stats, loading, error } = useDashboardStats()
 
-  const statsCards = [
+  const statsCards = stats ? [
     {
       title: "Revenus totaux",
       value: `${(stats.totalRevenue / 1000000).toFixed(2)}M FCFA`,
       change: `+${stats.revenueGrowth}%`,
-      changeType: "positive" as const,
+      changeType: stats.revenueGrowth >= 0 ? "positive" as const : "negative" as const,
       icon: TrendingUp,
       description: "vs mois dernier",
     },
@@ -61,13 +40,13 @@ export default function AdminDashboard() {
       title: "Réservations",
       value: stats.totalBookings.toString(),
       change: `+${stats.bookingGrowth}%`,
-      changeType: "positive" as const,
+      changeType: stats.bookingGrowth >= 0 ? "positive" as const : "negative" as const,
       icon: Calendar,
       description: "ce mois",
     },
     {
       title: "Véhicules actifs",
-      value: `${stats.activeVehicles}/26`,
+      value: `${stats.activeVehicles}`,
       change: `${stats.vehicleUtilization}%`,
       changeType: "positive" as const,
       icon: Car,
@@ -76,12 +55,12 @@ export default function AdminDashboard() {
     {
       title: "Clients actifs",
       value: stats.totalUsers.toString(),
-      change: "+15",
+      change: `${stats.customerSatisfaction}/5`,
       changeType: "positive" as const,
       icon: Users,
-      description: "nouveaux ce mois",
+      description: "satisfaction client",
     },
-  ]
+  ] : []
 
   return (
     <AdminLayout>
@@ -101,9 +80,51 @@ export default function AdminDashboard() {
           </Button>
         </div>
 
+        {/* Error State */}
+        {error && (
+          <Card className="p-6">
+            <div className="text-center">
+              <div className="w-16 h-16 mx-auto mb-4 bg-red-100 rounded-full flex items-center justify-center">
+                <svg className="w-8 h-8 text-red-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                </svg>
+              </div>
+              <h3 className="text-lg font-semibold text-gray-900 mb-2">
+                Erreur de chargement
+              </h3>
+              <p className="text-gray-600 mb-6">
+                {error}
+              </p>
+              <Button onClick={() => window.location.reload()}>
+                Réessayer
+              </Button>
+            </div>
+          </Card>
+        )}
+
         {/* Stats cards */}
-        <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-4">
-          {statsCards.map((stat, index) => (
+        {loading ? (
+          <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-4">
+            {[1, 2, 3, 4].map((i) => (
+              <Card key={i} className="p-6">
+                <div className="animate-pulse">
+                  <div className="flex items-center">
+                    <div className="h-10 w-10 bg-gray-200 rounded-lg"></div>
+                    <div className="ml-4 flex-1">
+                      <div className="h-4 bg-gray-200 rounded w-3/4 mb-2"></div>
+                      <div className="h-6 bg-gray-200 rounded w-1/2"></div>
+                    </div>
+                  </div>
+                  <div className="mt-4">
+                    <div className="h-4 bg-gray-200 rounded w-1/4"></div>
+                  </div>
+                </div>
+              </Card>
+            ))}
+          </div>
+        ) : (
+          <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-4">
+            {statsCards.map((stat, index) => (
             <motion.div
               key={stat.title}
               initial={{ opacity: 0, y: 20 }}
@@ -145,8 +166,9 @@ export default function AdminDashboard() {
                 </div>
               </Card>
             </motion.div>
-          ))}
-        </div>
+            ))}
+          </div>
+        )}
 
         {/* Charts section */}
         <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">

@@ -1,6 +1,6 @@
 "use client"
 
-import { useState } from "react"
+import { useState, useMemo } from "react"
 import { motion } from "framer-motion"
 import { Filter, Grid, List, SlidersHorizontal } from "lucide-react"
 import { MainLayout } from "@/components/layouts/main-layout"
@@ -9,42 +9,8 @@ import { VehicleSearchForm } from "@/components/forms/vehicle-search-form"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
 import { Vehicle, VehicleCategory, TransmissionType, FuelType } from "@/types"
-import { senegalVehiclesData } from "@/data/vehicles"
+import { useVehicles } from "@/hooks/useVehicles"
 
-// Convert imported data to complete Vehicle objects
-const senegalVehicles: Vehicle[] = senegalVehiclesData.map(vehicle => ({
-  id: vehicle.id!,
-  name: vehicle.name!,
-  brand: vehicle.brand!,
-  model: vehicle.model!,
-  year: vehicle.year!,
-  category: vehicle.category!,
-  transmission: vehicle.transmission!,
-  fuelType: vehicle.fuelType!,
-  seats: vehicle.seats!,
-  pricePerDay: vehicle.pricePerDay!,
-  images: vehicle.images!,
-  isAvailable: vehicle.isAvailable!,
-  location: vehicle.location!,
-  description: vehicle.description || "",
-  features: vehicle.features || [],
-  specifications: vehicle.specifications || {},
-  mileage: vehicle.mileage || 0,
-  created_at: vehicle.created_at || new Date().toISOString(),
-  updated_at: vehicle.updated_at || new Date().toISOString()
-}))
-
-// Calculate category counts dynamically from the vehicle data
-const categories = [
-  { key: "all", label: "Toutes", count: senegalVehicles.length },
-  { key: VehicleCategory.ECONOMY, label: "Économique", count: senegalVehicles.filter(v => v.category === VehicleCategory.ECONOMY).length },
-  { key: VehicleCategory.COMPACT, label: "Compacte", count: senegalVehicles.filter(v => v.category === VehicleCategory.COMPACT).length },
-  { key: VehicleCategory.STANDARD, label: "Standard", count: senegalVehicles.filter(v => v.category === VehicleCategory.STANDARD).length },
-  { key: VehicleCategory.SUV, label: "SUV", count: senegalVehicles.filter(v => v.category === VehicleCategory.SUV).length },
-  { key: VehicleCategory.PREMIUM, label: "Premium", count: senegalVehicles.filter(v => v.category === VehicleCategory.PREMIUM).length },
-  { key: VehicleCategory.LUXURY, label: "Luxe", count: senegalVehicles.filter(v => v.category === VehicleCategory.LUXURY).length },
-  { key: VehicleCategory.VAN, label: "Utilitaire", count: senegalVehicles.filter(v => v.category === VehicleCategory.VAN).length },
-]
 
 export default function CataloguePage() {
   const [selectedCategory, setSelectedCategory] = useState("all")
@@ -61,55 +27,47 @@ export default function CataloguePage() {
   })
   const [sortBy, setSortBy] = useState("recommended")
 
-  const filteredVehicles = senegalVehicles.filter(vehicle => {
-    // Category filter
-    if (selectedCategory !== "all" && vehicle.category !== selectedCategory) {
-      return false
-    }
-    
-    // Price filter
-    if (vehicle.pricePerDay < filters.priceMin || vehicle.pricePerDay > filters.priceMax) {
-      return false
-    }
-    
-    // Transmission filter
-    if (filters.transmission !== "all" && vehicle.transmission !== filters.transmission) {
-      return false
-    }
-    
-    // Fuel type filter
-    if (filters.fuelType !== "all" && vehicle.fuelType !== filters.fuelType) {
-      return false
-    }
-    
-    // Seats filter
-    if (filters.seats !== "all") {
-      const seatsNumber = parseInt(filters.seats)
-      if (vehicle.seats !== seatsNumber) {
-        return false
-      }
-    }
-    
-    // Location filter
-    if (filters.location !== "all" && vehicle.location !== filters.location) {
-      return false
-    }
-    
-    return true
-  }).sort((a, b) => {
-    switch (sortBy) {
-      case "price-low":
-        return a.pricePerDay - b.pricePerDay
-      case "price-high":
-        return b.pricePerDay - a.pricePerDay
-      case "name":
-        return a.name.localeCompare(b.name)
-      case "year":
-        return b.year - a.year
-      default:
-        return 0
-    }
+  // Use the API hook to fetch vehicles
+  const { vehicles, loading, error, totalCount } = useVehicles({
+    category: selectedCategory === 'all' ? undefined : selectedCategory,
+    location: filters.location === 'all' ? undefined : filters.location,
+    priceMin: filters.priceMin,
+    priceMax: filters.priceMax,
+    transmission: filters.transmission === 'all' ? undefined : filters.transmission,
+    fuelType: filters.fuelType === 'all' ? undefined : filters.fuelType,
+    seats: filters.seats === 'all' ? undefined : filters.seats,
   })
+
+  // Calculate category counts dynamically from the vehicle data
+  const categories = useMemo(() => [
+    { key: "all", label: "Toutes", count: totalCount },
+    { key: VehicleCategory.ECONOMY, label: "Économique", count: vehicles.filter(v => v.category === VehicleCategory.ECONOMY).length },
+    { key: VehicleCategory.COMPACT, label: "Compacte", count: vehicles.filter(v => v.category === VehicleCategory.COMPACT).length },
+    { key: VehicleCategory.STANDARD, label: "Standard", count: vehicles.filter(v => v.category === VehicleCategory.STANDARD).length },
+    { key: VehicleCategory.SUV, label: "SUV", count: vehicles.filter(v => v.category === VehicleCategory.SUV).length },
+    { key: VehicleCategory.PREMIUM, label: "Premium", count: vehicles.filter(v => v.category === VehicleCategory.PREMIUM).length },
+    { key: VehicleCategory.LUXURY, label: "Luxe", count: vehicles.filter(v => v.category === VehicleCategory.LUXURY).length },
+    { key: VehicleCategory.VAN, label: "Utilitaire", count: vehicles.filter(v => v.category === VehicleCategory.VAN).length },
+  ], [vehicles, totalCount])
+
+  // Sort vehicles based on sortBy option
+  const filteredVehicles = useMemo(() => {
+    const sorted = [...vehicles].sort((a, b) => {
+      switch (sortBy) {
+        case "price-low":
+          return a.pricePerDay - b.pricePerDay
+        case "price-high":
+          return b.pricePerDay - a.pricePerDay
+        case "name":
+          return a.name.localeCompare(b.name)
+        case "year":
+          return b.year - a.year
+        default:
+          return 0
+      }
+    })
+    return sorted
+  }, [vehicles, sortBy])
 
   return (
     <MainLayout>
@@ -395,33 +353,66 @@ export default function CataloguePage() {
                 </div>
               </div>
 
-              {/* Vehicles Grid */}
-              <motion.div
-                layout
-                className={
-                  viewMode === "grid"
-                    ? "grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6"
-                    : "space-y-6"
-                }
-              >
-                {filteredVehicles.map((vehicle, index) => (
-                  <motion.div
-                    key={vehicle.id}
-                    initial={{ opacity: 0, y: 20 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ delay: index * 0.1 }}
-                    layout
+              {/* Loading State */}
+              {loading && (
+                <div className="flex justify-center items-center py-16">
+                  <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-senegal-green"></div>
+                  <span className="ml-3 text-gray-600">Chargement des véhicules...</span>
+                </div>
+              )}
+
+              {/* Error State */}
+              {error && (
+                <div className="text-center py-16">
+                  <div className="w-16 h-16 mx-auto mb-4 bg-red-100 rounded-full flex items-center justify-center">
+                    <svg className="w-8 h-8 text-red-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                    </svg>
+                  </div>
+                  <h3 className="text-lg font-semibold text-gray-900 mb-2">
+                    Erreur de chargement
+                  </h3>
+                  <p className="text-gray-600 mb-6">
+                    {error}
+                  </p>
+                  <Button
+                    onClick={() => window.location.reload()}
+                    variant="outline"
                   >
-                    <VehicleCard 
-                      vehicle={vehicle}
-                      className={viewMode === "list" ? "max-w-none" : ""}
-                    />
-                  </motion.div>
-                ))}
-              </motion.div>
+                    Réessayer
+                  </Button>
+                </div>
+              )}
+
+              {/* Vehicles Grid */}
+              {!loading && !error && (
+                <motion.div
+                  layout
+                  className={
+                    viewMode === "grid"
+                      ? "grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6"
+                      : "space-y-6"
+                  }
+                >
+                  {filteredVehicles.map((vehicle, index) => (
+                    <motion.div
+                      key={vehicle.id}
+                      initial={{ opacity: 0, y: 20 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      transition={{ delay: index * 0.1 }}
+                      layout
+                    >
+                      <VehicleCard 
+                        vehicle={vehicle}
+                        className={viewMode === "list" ? "max-w-none" : ""}
+                      />
+                    </motion.div>
+                  ))}
+                </motion.div>
+              )}
 
               {/* Empty State */}
-              {filteredVehicles.length === 0 && (
+              {!loading && !error && filteredVehicles.length === 0 && (
                 <div className="text-center py-16">
                   <div className="w-16 h-16 mx-auto mb-4 bg-gray-100 rounded-full flex items-center justify-center">
                     <Filter className="w-8 h-8 text-gray-400" />

@@ -45,8 +45,25 @@ export function VehicleSearchForm({
     setIsSearching(true)
     try {
       onSearch?.(data)
-      // TODO: Navigate to search results or handle search
-      console.log("Search data:", data)
+      
+      // Build search params
+      const params = new URLSearchParams()
+      if (data.location && data.location !== 'all') {
+        params.append('location', data.location)
+      }
+      if (data.pickupDate) {
+        params.append('pickupDate', data.pickupDate)
+      }
+      if (data.returnDate) {
+        params.append('returnDate', data.returnDate)
+      }
+      if (data.vehicleType && data.vehicleType !== 'all') {
+        params.append('category', data.vehicleType)
+      }
+      
+      // Navigate to catalogue with search params
+      const searchUrl = params.toString() ? `/catalogue?${params.toString()}` : '/catalogue'
+      window.location.href = searchUrl
     } catch (error) {
       console.error("Search error:", error)
     } finally {

@@ -7,6 +7,7 @@ import { useForm } from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { z } from "zod"
 import { motion } from "framer-motion"
+import { signIn } from "next-auth/react"
 import { Mail, Lock, Eye, EyeOff, Car, CheckCircle } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
@@ -41,6 +42,7 @@ function LoginForm() {
   const [isLoading, setIsLoading] = useState(false)
   const [showPassword, setShowPassword] = useState(false)
   const [successMessage, setSuccessMessage] = useState<string | null>(null)
+  const [error, setError] = useState("")
   const router = useRouter()
 
   const {
@@ -53,12 +55,22 @@ function LoginForm() {
 
   const onSubmit = async (data: LoginFormData) => {
     setIsLoading(true)
+    setError("")
+    
     try {
-      // TODO: Implement actual login logic
-      console.log("Login data:", data)
-      await new Promise(resolve => setTimeout(resolve, 2000)) // Simulate API call
-      router.push("/")
+      const result = await signIn('credentials', {
+        email: data.email,
+        password: data.password,
+        redirect: false
+      })
+
+      if (result?.error) {
+        setError("Email ou mot de passe incorrect")
+      } else if (result?.ok) {
+        router.push("/")
+      }
     } catch (error) {
+      setError("Une erreur est survenue lors de la connexion")
       console.error("Login error:", error)
     } finally {
       setIsLoading(false)
