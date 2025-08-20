@@ -197,24 +197,31 @@ Route::middleware(['auth:sanctum', 'role:admin'])->group(function () {
 
 // HOTFIX: Corriger les URLs d'images immédiatement
 Route::get('/fix-images-now', function () {
-    $oldDomain = 'https://senerentcar-dzl6d6fy9-wissem95s-projects.vercel.app';
-    $newDomain = 'https://senerentcar.vercel.app';
+    $oldDomain = 'senerentcar-dzl6d6fy9-wissem95s-projects.vercel.app';
+    $newDomain = 'senerentcar.vercel.app';
     
     $vehicles = \App\Models\Vehicle::all();
     $updated = 0;
+    $debugInfo = [];
     
     foreach ($vehicles as $vehicle) {
         $images = $vehicle->images; // Laravel cast automatique du JSON
+        $originalImages = $images;
         $changed = false;
         
         if (is_array($images)) {
             $newImages = [];
             foreach ($images as $image) {
-                if (str_contains($image, $oldDomain)) {
+                // Debug: vérifier chaque image
+                $debugInfo[] = "Véhicule {$vehicle->id}: Image = {$image}";
+                
+                if (strpos($image, $oldDomain) !== false) {
                     $newImages[] = str_replace($oldDomain, $newDomain, $image);
                     $changed = true;
+                    $debugInfo[] = "  → CHANGÉ";
                 } else {
                     $newImages[] = $image;
+                    $debugInfo[] = "  → Pas de changement";
                 }
             }
             
@@ -223,6 +230,8 @@ Route::get('/fix-images-now', function () {
                 $vehicle->save();
                 $updated++;
             }
+        } else {
+            $debugInfo[] = "Véhicule {$vehicle->id}: Images n'est pas un array: " . json_encode($images);
         }
     }
     
@@ -230,7 +239,8 @@ Route::get('/fix-images-now', function () {
         'status' => 'success',
         'message' => "URLs d'images mises à jour",
         'vehicles_updated' => $updated,
-        'total_vehicles' => $vehicles->count()
+        'total_vehicles' => $vehicles->count(),
+        'debug' => array_slice($debugInfo, 0, 10) // Premiers 10 éléments pour debug
     ]);
 });
 
