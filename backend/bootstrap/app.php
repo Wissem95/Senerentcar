@@ -15,21 +15,17 @@ return Application::configure(basePath: dirname(__DIR__))
         $middleware->alias([
             'role' => \App\Http\Middleware\RoleMiddleware::class,
             'permission' => \App\Http\Middleware\PermissionMiddleware::class,
+            'custom.cors' => \App\Http\Middleware\CustomCorsMiddleware::class,
         ]);
         
         // Enable CORS globally
         $middleware->use([
-            \Illuminate\Http\Middleware\HandleCors::class,
-        ]);
-        
-        // Enable CORS for all routes
-        $middleware->web(prepend: [
-            \Illuminate\Http\Middleware\HandleCors::class,
+            \App\Http\Middleware\CustomCorsMiddleware::class,
         ]);
         
         // Enable CORS for API routes
         $middleware->api(prepend: [
-            \Illuminate\Http\Middleware\HandleCors::class,
+            \App\Http\Middleware\CustomCorsMiddleware::class,
         ]);
     })
     ->withExceptions(function (Exceptions $exceptions) {

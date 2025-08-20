@@ -9,6 +9,15 @@ use App\Http\Controllers\API\FileUploadController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
+// Health check pour Railway
+Route::get('/health', function () {
+    return response()->json([
+        'status' => 'ok',
+        'timestamp' => now(),
+        'app' => config('app.name'),
+    ]);
+});
+
 /*
 |--------------------------------------------------------------------------
 | API Routes
