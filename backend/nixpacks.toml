@@ -1,4 +1,6 @@
 [variables]
+APP_ENV = "production"
+APP_DEBUG = "false"
 DB_CONNECTION = "mysql"
 DB_HOST = "${MYSQL_HOST}"
 DB_PORT = "${MYSQL_PORT}"
@@ -16,7 +18,7 @@ cmds = [
 
 [phases.build]
 cmds = [
-    "echo 'Build phase completed - skipping migrations for debugging'"
+    "php artisan config:cache"
 ]
 
 [start]
