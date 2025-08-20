@@ -1,7 +1,6 @@
-# Multi-stage Laravel Dockerfile for production
+# Production Laravel Dockerfile with Nginx + PHP-FPM
 
-# Stage 1: Build dependencies
-FROM php:8.2-fpm as builder
+FROM php:8.2-fpm
 
 # Install system dependencies
 RUN apt-get update && apt-get install -y \
@@ -17,47 +16,8 @@ RUN apt-get update && apt-get install -y \
     libicu-dev \
     nginx \
     supervisor \
-    && apt-get clean \
-    && rm -rf /var/lib/apt/lists/*
-
-# Install PHP extensions (PostgreSQL for Supabase)
-RUN docker-php-ext-install \
-    pdo_pgsql \
-    pgsql \
-    mbstring \
-    exif \
-    pcntl \
-    bcmath \
-    gd \
-    zip \
-    intl
-
-# Install Composer
-COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
-
-# Set working directory
-WORKDIR /var/www/html
-
-# Copy composer files
-COPY composer.json composer.lock ./
-
-# Install PHP dependencies (without dev dependencies for production)
-RUN composer install --no-dev --optimize-autoloader --no-scripts
-
-# Stage 2: Production image
-FROM php:8.2-fpm
-
-# Install system dependencies
-RUN apt-get update && apt-get install -y \
-    libpng-dev \
-    libonig-dev \
-    libxml2-dev \
-    libzip-dev \
-    libpq-dev \
-    libicu-dev \
-    nginx \
-    supervisor \
     cron \
+    gettext-base \
     && apt-get clean \
     && rm -rf /var/lib/apt/lists/*
 
@@ -76,20 +36,21 @@ RUN docker-php-ext-install \
 # Install Redis extension
 RUN pecl install redis && docker-php-ext-enable redis
 
-# Copy Composer from builder stage
+# Install Composer
 COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
 
 # Set working directory
 WORKDIR /var/www/html
 
-# Copy vendor from builder stage
-COPY --from=builder /var/www/html/vendor ./vendor
+# Copy composer files and install dependencies
+COPY composer.json composer.lock ./
+RUN composer install --no-dev --optimize-autoloader --no-scripts
 
 # Copy application files
 COPY . .
 
 # Copy configuration files
-COPY docker/nginx.conf /etc/nginx/sites-available/default
+COPY docker/nginx.conf.template /etc/nginx/nginx.conf.template
 COPY docker/php.ini /usr/local/etc/php/conf.d/custom.ini
 COPY docker/supervisord.conf /etc/supervisor/conf.d/supervisord.conf
 COPY docker/start.sh /start.sh
@@ -105,16 +66,11 @@ RUN mkdir -p /var/log/supervisor \
     && mkdir -p /var/log/nginx \
     && mkdir -p /var/log/php
 
-# Note: Config cache removed to allow Railway environment variables to be read dynamically
-# Route and view cache are still applied as they don't depend on environment variables
-RUN php artisan route:cache \
-    && php artisan view:cache
-
 # Add crontab for Laravel scheduler
 RUN echo "* * * * * www-data cd /var/www/html && php artisan schedule:run >> /dev/null 2>&1" >> /etc/crontab
 
 # Expose port for Railway (Railway sets PORT automatically)
 EXPOSE $PORT
 
-# Back to Laravel artisan serve - most compatible with Railway
-CMD ["sh", "-c", "echo \"Starting Laravel on 0.0.0.0:${PORT:-8000}\" && php artisan config:clear && php artisan migrate --force && php artisan serve --host=0.0.0.0 --port=${PORT:-8000} --no-reload"]
+# Start with proper Nginx + supervisord setup
+CMD ["/start.sh"]

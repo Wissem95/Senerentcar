@@ -45,6 +45,15 @@ mkdir -p /var/log/supervisor
 mkdir -p /var/log/nginx
 mkdir -p /var/log/php
 
+# Generate nginx configuration from template with Railway PORT
+echo "🔧 Generating nginx configuration for Railway..."
+export NGINX_PORT=${PORT:-80}
+envsubst '${NGINX_PORT}' < /etc/nginx/nginx.conf.template > /etc/nginx/sites-available/default
+rm -f /etc/nginx/sites-enabled/default
+ln -sf /etc/nginx/sites-available/default /etc/nginx/sites-enabled/default
+
+echo "✅ Nginx configured to listen on port: $NGINX_PORT"
+
 # Start supervisord
 echo "🎬 Starting services with supervisord..."
 exec /usr/bin/supervisord -c /etc/supervisor/conf.d/supervisord.conf
