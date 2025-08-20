@@ -140,7 +140,7 @@ class BookingSeeder extends Seeder
 
         foreach ($bookings as $bookingData) {
             // Generate booking number first
-            $bookingData['booking_number'] = 'SRC-' . now()->format('Ymd') . '-' . str_pad(fake()->unique()->numberBetween(1, 9999), 4, '0', STR_PAD_LEFT);
+            $bookingData['booking_number'] = 'SRC-' . now()->format('Ymd') . '-' . str_pad(random_int(1, 9999), 4, '0', STR_PAD_LEFT);
             
             $booking = \App\Models\Booking::create($bookingData);
         }

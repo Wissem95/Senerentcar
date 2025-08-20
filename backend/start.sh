@@ -5,16 +5,20 @@ set -e  # Arrêter si une commande échoue
 
 echo "=== Démarrage de SeneRentCar Backend ==="
 
-# Obtenir le port depuis l'environnement ou utiliser 8000 par défaut
-PORT=${PORT:-8000}
+# Obtenir le port depuis l'environnement Railway
+echo "Variable PORT Railway: ${PORT:-non définie}"
 
-# S'assurer que PORT est un entier
-if ! [[ "$PORT" =~ ^[0-9]+$ ]]; then
-    echo "PORT n'est pas un nombre valide: $PORT. Utilisation du port 8000."
-    PORT=8000
+# Railway fournit toujours un port, sinon fallback 8000
+APP_PORT=${PORT:-8000}
+
+# S'assurer que APP_PORT est un entier
+if ! [[ "$APP_PORT" =~ ^[0-9]+$ ]]; then
+    echo "PORT n'est pas un nombre valide: $APP_PORT. Utilisation du port 8000."
+    APP_PORT=8000
 fi
 
-echo "Port configuré: $PORT"
+echo "Port configuré pour le serveur: $APP_PORT"
+echo "Railway PORT original: $PORT"
 
 # Vérifier les variables d'environnement critiques
 echo "=== Vérification de l'environnement ==="
@@ -41,5 +45,5 @@ echo "=== Exécution des seeders ==="
 php artisan db:seed --force || echo "Erreur seeders - continuons..."
 
 # Démarrer le serveur
-echo "=== Démarrage du serveur Laravel sur le port: $PORT ==="
-php artisan serve --host=0.0.0.0 --port=$PORT
+echo "=== Démarrage du serveur Laravel sur le port: $APP_PORT ==="
+php artisan serve --host=0.0.0.0 --port=$APP_PORT
