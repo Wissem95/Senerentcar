@@ -116,5 +116,5 @@ RUN echo "* * * * * www-data cd /var/www/html && php artisan schedule:run >> /de
 # Expose port for Railway (Railway sets PORT automatically)
 EXPOSE $PORT
 
-# Start with PHP built-in server on localhost (Railway requirement)
-CMD ["sh", "-c", "echo \"Starting server on 127.0.0.1:${PORT:-8000}\" && php artisan config:clear && php artisan migrate --force && cd public && php -S 127.0.0.1:${PORT:-8000} ../server.php"]
+# Back to Laravel artisan serve - most compatible with Railway
+CMD ["sh", "-c", "echo \"Starting Laravel on 0.0.0.0:${PORT:-8000}\" && php artisan config:clear && php artisan migrate --force && php artisan serve --host=0.0.0.0 --port=${PORT:-8000} --no-reload"]
