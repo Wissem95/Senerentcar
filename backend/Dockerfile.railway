@@ -1,0 +1,42 @@
+FROM php:8.2-cli
+
+# Install system dependencies and MySQL driver
+RUN apt-get update && apt-get install -y \
+    git \
+    curl \
+    libpng-dev \
+    libonig-dev \
+    libxml2-dev \
+    zip \
+    unzip \
+    default-mysql-client \
+    && docker-php-ext-install pdo pdo_mysql mysqli \
+    && apt-get clean \
+    && rm -rf /var/lib/apt/lists/*
+
+# Install additional PHP extensions
+RUN docker-php-ext-install mbstring exif pcntl bcmath gd
+
+# Install Composer
+COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
+
+# Set working directory
+WORKDIR /app
+
+# Copy composer files first for better caching
+COPY composer.json composer.lock ./
+
+# Install PHP dependencies
+RUN composer install --optimize-autoloader --no-dev
+
+# Copy application files
+COPY . .
+
+# Make scripts executable
+RUN chmod +x start.sh
+
+# Set environment variable for Railway
+ENV PORT=${PORT:-8000}
+
+# Start the application
+CMD ["./start.sh"]

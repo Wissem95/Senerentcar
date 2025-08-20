@@ -19,9 +19,10 @@ RUN apt-get update && apt-get install -y \
     && apt-get clean \
     && rm -rf /var/lib/apt/lists/*
 
-# Install PHP extensions
+# Install PHP extensions (MySQL instead of PostgreSQL)
 RUN docker-php-ext-install \
-    pdo_pgsql \
+    pdo_mysql \
+    mysqli \
     mbstring \
     exif \
     pcntl \
@@ -57,9 +58,10 @@ RUN apt-get update && apt-get install -y \
     && apt-get clean \
     && rm -rf /var/lib/apt/lists/*
 
-# Install PHP extensions
+# Install PHP extensions (MySQL instead of PostgreSQL)
 RUN docker-php-ext-install \
-    pdo_pgsql \
+    pdo_mysql \
+    mysqli \
     mbstring \
     exif \
     pcntl \

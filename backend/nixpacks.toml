@@ -1,0 +1,18 @@
+[phases.setup]
+nixPkgs = ["php82", "php82Extensions.pdo", "php82Extensions.pdo_mysql", "php82Extensions.mysqli", "php82Extensions.mbstring", "php82Extensions.gd", "php82Extensions.zip", "php82Extensions.bcmath", "php82Extensions.curl", "php82Extensions.openssl", "php82Extensions.tokenizer", "php82Extensions.xml", "php82Extensions.ctype", "php82Extensions.json", "php82Extensions.fileinfo", "php82Extensions.session", "mysql80"]
+
+[phases.install]
+cmds = [
+    "composer install --optimize-autoloader --no-dev",
+    "chmod +x start.sh"
+]
+
+[phases.build]
+cmds = [
+    "php artisan config:clear",
+    "php artisan route:clear",
+    "php artisan view:clear"
+]
+
+[start]
+cmd = "./start.sh"
