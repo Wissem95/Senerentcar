@@ -29,28 +29,32 @@ const teamMembers = [
     role: "Fondateur & CEO",
     image: "/images/personnes/Amadou Diallo .jpeg",
     description: "Expert automobile avec 15 ans d'expérience dans le secteur au Sénégal",
-    linkedin: "#"
+    linkedin: "#",
+    imageStyle: {}
   },
   {
     name: "Fatou Sané",
     role: "Directrice Opérations",
     image: "/images/personnes/Fatou Sane.png", 
     description: "Spécialisée en logistique et gestion de flotte automobile",
-    linkedin: "#"
+    linkedin: "#",
+    imageStyle: { objectPosition: "center top" }
   },
   {
     name: "Ousmane Fall",
     role: "Directeur Technique",
     image: "/images/personnes/Ousmane Fall.jpeg",
     description: "Ingénieur informatique, expert en solutions digitales",
-    linkedin: "#"
+    linkedin: "#",
+    imageStyle: { objectPosition: "right center" }
   },
   {
     name: "Aïssa Ndiaye", 
     role: "Responsable Relation Client",
     image: "/images/personnes/Aissa Ndiaye.jpeg",
     description: "Passionnée par le service client et l'expérience utilisateur",
-    linkedin: "#"
+    linkedin: "#",
+    imageStyle: {}
   }
 ]
 
@@ -300,6 +304,7 @@ export default function AboutPage() {
                         src={member.image}
                         alt={member.name}
                         className="w-full h-full object-cover hover:scale-105 transition-transform duration-300"
+                        style={member.imageStyle}
                       />
                     </div>
                     <CardContent className="p-6 text-center">
