@@ -161,8 +161,9 @@ Route::middleware(['auth:sanctum'])->group(function () {
     });
 });
 
-// Admin routes (require admin or manager role)
-Route::middleware(['auth:sanctum', 'role:admin,manager'])->group(function () {
+// Admin routes (DEMO MODE - No auth required)
+// TODO: Re-enable auth for production: ['auth:sanctum', 'role:admin,manager'] 
+Route::group(function () {
     
     // Admin dashboard stats
     Route::get('/admin/dashboard/stats', function () {
@@ -261,8 +262,9 @@ Route::middleware(['auth:sanctum', 'role:admin,manager'])->group(function () {
     });
 });
 
-// Super Admin routes (admin only)
-Route::middleware(['auth:sanctum', 'role:admin'])->group(function () {
+// Super Admin routes (DEMO MODE - No auth required)
+// TODO: Re-enable auth for production: ['auth:sanctum', 'role:admin']
+Route::group(function () {
     
     // User management would go here if needed
     // Route::apiResource('users', UserController::class);
