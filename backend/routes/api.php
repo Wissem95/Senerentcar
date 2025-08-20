@@ -18,6 +18,46 @@ Route::get('/health', function () {
     ]);
 });
 
+// Debug route pour Railway
+Route::get('/debug', function () {
+    try {
+        $dbConnected = false;
+        $tableCount = 0;
+        
+        try {
+            \DB::connection()->getPdo();
+            $dbConnected = true;
+            $tableCount = \DB::select('SHOW TABLES');
+            $tableCount = count($tableCount);
+        } catch (\Exception $e) {
+            $dbError = $e->getMessage();
+        }
+        
+        return response()->json([
+            'status' => 'debug',
+            'timestamp' => now(),
+            'app' => config('app.name'),
+            'env' => config('app.env'),
+            'debug' => config('app.debug'),
+            'database' => [
+                'connected' => $dbConnected,
+                'tables' => $tableCount,
+                'error' => $dbError ?? null,
+            ],
+            'config' => [
+                'db_host' => config('database.connections.mysql.host'),
+                'db_database' => config('database.connections.mysql.database'),
+            ]
+        ]);
+    } catch (\Exception $e) {
+        return response()->json([
+            'status' => 'error',
+            'message' => $e->getMessage(),
+            'trace' => $e->getTraceAsString()
+        ], 500);
+    }
+});
+
 /*
 |--------------------------------------------------------------------------
 | API Routes
@@ -35,6 +75,29 @@ Route::prefix('auth')->group(function () {
     Route::post('/login', [AuthController::class, 'login']);
     Route::post('/forgot-password', [AuthController::class, 'forgotPassword']);
     Route::post('/reset-password', [AuthController::class, 'resetPassword']);
+});
+
+// Test route simple pour véhicules
+Route::get('/vehicles-test', function () {
+    try {
+        $count = \App\Models\Vehicle::count();
+        $first = \App\Models\Vehicle::first();
+        
+        return response()->json([
+            'status' => 'success',
+            'vehicles_count' => $count,
+            'first_vehicle' => $first ? [
+                'id' => $first->id,
+                'name' => $first->name,
+                'images' => $first->images
+            ] : null
+        ]);
+    } catch (\Exception $e) {
+        return response()->json([
+            'status' => 'error',
+            'message' => $e->getMessage()
+        ], 500);
+    }
 });
 
 // Public vehicle routes
