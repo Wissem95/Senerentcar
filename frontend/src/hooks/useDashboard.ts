@@ -36,25 +36,41 @@ export function useDashboardStats() {
   const [stats, setStats] = useState<DashboardStats | null>(null)
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
+  const [mounted, setMounted] = useState(false)
 
   const fetchStats = async () => {
+    if (!mounted) return
+    
     setLoading(true)
     setError(null)
 
     try {
       const response = await apiClient.get<DashboardStats>('/admin/dashboard/stats')
-      setStats(response.data)
+      if (mounted) {
+        setStats(response.data)
+      }
     } catch (err) {
       console.error('Error fetching dashboard stats:', err)
-      setError('Impossible de charger les statistiques du dashboard.')
+      if (mounted) {
+        setError('Impossible de charger les statistiques du dashboard.')
+      }
     } finally {
-      setLoading(false)
+      if (mounted) {
+        setLoading(false)
+      }
     }
   }
 
   useEffect(() => {
-    fetchStats()
+    setMounted(true)
+    return () => setMounted(false)
   }, [])
+
+  useEffect(() => {
+    if (mounted) {
+      fetchStats()
+    }
+  }, [mounted])
 
   return { stats, loading, error, refetch: fetchStats }
 }
