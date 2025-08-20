@@ -73,7 +73,7 @@ export default function AdminDashboard() {
   return (
     <AdminLayout>
       <div className="min-h-screen bg-gradient-to-br from-slate-50 via-white to-slate-100 dark:from-slate-900 dark:via-slate-800 dark:to-slate-900">
-        <div className="w-full max-w-none space-y-6 sm:space-y-8 p-3 sm:p-4 md:p-6 lg:p-8 xl:p-10">
+        <div className="w-full max-w-none space-y-6 sm:space-y-8">
           {/* Page header */}
           <section className="w-full">
             <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between bg-white/80 dark:bg-slate-800/80 backdrop-blur-sm rounded-2xl p-4 sm:p-6 lg:p-8 shadow-lg border border-slate-200/50 dark:border-slate-700/50 gap-4 sm:gap-6">

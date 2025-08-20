@@ -196,7 +196,7 @@ export function AdminLayout({ children }: AdminLayoutProps) {
         </motion.div>
 
         {/* Main content */}
-        <div className="flex flex-1 flex-col overflow-hidden lg:ml-64">
+        <div className="flex flex-1 flex-col overflow-hidden">
           {/* Top bar */}
           <header className="bg-white dark:bg-gray-900 shadow-sm border-b border-gray-200 dark:border-gray-700">
             <div className="flex h-16 items-center justify-between px-4 sm:px-6">
@@ -250,7 +250,7 @@ export function AdminLayout({ children }: AdminLayoutProps) {
           {/* Page content */}
           <main className="flex-1 overflow-y-auto bg-gray-50 dark:bg-gray-800">
             <div className="py-4 sm:py-6">
-              <div className="w-full max-w-none px-2 sm:px-4 md:px-6 lg:px-8">
+              <div className="w-full max-w-none px-4 sm:px-6 lg:px-8 xl:px-10">
                 {children}
               </div>
             </div>
