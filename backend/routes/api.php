@@ -163,7 +163,7 @@ Route::middleware(['auth:sanctum'])->group(function () {
 
 // Admin routes (DEMO MODE - No auth required)
 // TODO: Re-enable auth for production: ['auth:sanctum', 'role:admin,manager'] 
-Route::group(function () {
+Route::group([], function () {
     
     // Admin dashboard stats
     Route::get('/admin/dashboard/stats', function () {
@@ -264,7 +264,7 @@ Route::group(function () {
 
 // Super Admin routes (DEMO MODE - No auth required)
 // TODO: Re-enable auth for production: ['auth:sanctum', 'role:admin']
-Route::group(function () {
+Route::group([], function () {
     
     // User management would go here if needed
     // Route::apiResource('users', UserController::class);
