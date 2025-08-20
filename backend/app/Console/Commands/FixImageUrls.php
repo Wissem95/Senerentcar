@@ -29,7 +29,7 @@ class FixImageUrls extends Command
         $newDomain = 'https://senerentcar.vercel.app';
         
         $vehicles = \DB::table('vehicles')
-            ->where('images', 'LIKE', '%' . $oldDomain . '%')
+            ->whereRaw('images::text LIKE ?', ['%' . $oldDomain . '%'])
             ->get(['id', 'name', 'images']);
             
         if ($vehicles->isEmpty()) {
@@ -55,13 +55,18 @@ class FixImageUrls extends Command
         }
         
         if ($this->confirm('Appliquer ces corrections ?')) {
-            $updated = \DB::table('vehicles')
-                ->where('images', 'LIKE', '%' . $oldDomain . '%')
-                ->update([
-                    'images' => \DB::raw("REPLACE(images, '{$oldDomain}', '{$newDomain}')")
-                ]);
+            // Utiliser PostgreSQL REPLACE avec cast JSON
+            $updated = \DB::statement("
+                UPDATE vehicles 
+                SET images = REPLACE(images::text, ?, ?)::json
+                WHERE images::text LIKE ?
+            ", [$oldDomain, $newDomain, "%{$oldDomain}%"]);
             
-            $this->success("✅ {$updated} véhicules mis à jour avec succès !");
+            $count = \DB::table('vehicles')
+                ->whereRaw('images::text LIKE ?', ['%' . $newDomain . '%'])
+                ->count();
+                
+            $this->success("✅ {$count} véhicules mis à jour avec succès !");
         } else {
             $this->info('❌ Opération annulée.');
         }

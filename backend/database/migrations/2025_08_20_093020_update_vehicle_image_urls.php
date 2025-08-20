@@ -11,14 +11,18 @@ return new class extends Migration
      */
     public function up(): void
     {
-        // Corriger les URLs d'images des véhicules
-        DB::table('vehicles')
-            ->where('images', 'LIKE', '%senerentcar-dzl6d6fy9-wissem95s-projects.vercel.app%')
-            ->update([
-                'images' => DB::raw("REPLACE(images, 'https://senerentcar-dzl6d6fy9-wissem95s-projects.vercel.app', 'https://senerentcar.vercel.app')")
-            ]);
+        // Corriger les URLs d'images des véhicules (syntaxe PostgreSQL)
+        $oldDomain = 'https://senerentcar-dzl6d6fy9-wissem95s-projects.vercel.app';
+        $newDomain = 'https://senerentcar.vercel.app';
         
-        echo "URLs d'images des véhicules mises à jour\n";
+        // PostgreSQL: Convertir JSON → text → replace → JSON
+        DB::statement("
+            UPDATE vehicles 
+            SET images = REPLACE(images::text, ?, ?)::json
+            WHERE images::text LIKE ?
+        ", [$oldDomain, $newDomain, "%{$oldDomain}%"]);
+        
+        echo "URLs d'images des véhicules mises à jour avec PostgreSQL\n";
     }
 
     /**
@@ -26,11 +30,14 @@ return new class extends Migration
      */
     public function down(): void
     {
-        // Restaurer les anciennes URLs si nécessaire
-        DB::table('vehicles')
-            ->where('images', 'LIKE', '%senerentcar.vercel.app%')
-            ->update([
-                'images' => DB::raw("REPLACE(images, 'https://senerentcar.vercel.app', 'https://senerentcar-dzl6d6fy9-wissem95s-projects.vercel.app')")
-            ]);
+        // Restaurer les anciennes URLs si nécessaire (PostgreSQL)
+        $newDomain = 'https://senerentcar.vercel.app';
+        $oldDomain = 'https://senerentcar-dzl6d6fy9-wissem95s-projects.vercel.app';
+        
+        DB::statement("
+            UPDATE vehicles 
+            SET images = REPLACE(images::text, ?, ?)::json
+            WHERE images::text LIKE ?
+        ", [$newDomain, $oldDomain, "%{$newDomain}%"]);
     }
 };
