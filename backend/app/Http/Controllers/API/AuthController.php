@@ -73,11 +73,24 @@ class AuthController extends Controller
         
         $token = $user->createToken('auth_token')->plainTextToken;
 
+        // Determine redirect path based on user role
+        $redirectPath = '/profile'; // Default for customers
+        if ($user->hasRole('admin')) {
+            $redirectPath = '/admin/dashboard';
+        } elseif ($user->hasRole('manager')) {
+            $redirectPath = '/admin/dashboard';
+        }
+
         return response()->json([
             'message' => 'Connexion réussie',
             'user' => new UserResource($user->load('roles')),
             'access_token' => $token,
             'token_type' => 'Bearer',
+            'user_type' => $user->hasRole(['admin', 'manager']) ? 'admin' : 'customer',
+            'is_admin' => $user->hasRole('admin'),
+            'is_manager' => $user->hasRole('manager'),
+            'is_customer' => $user->hasRole('customer'),
+            'redirect_to' => $redirectPath,
         ]);
     }
 
@@ -90,6 +103,10 @@ class AuthController extends Controller
 
         return response()->json([
             'user' => new UserResource($user),
+            'user_type' => $user->hasRole(['admin', 'manager']) ? 'admin' : 'customer',
+            'is_admin' => $user->hasRole('admin'),
+            'is_manager' => $user->hasRole('manager'),
+            'is_customer' => $user->hasRole('customer'),
         ]);
     }
 
