@@ -14,6 +14,7 @@ RUN apt-get update && apt-get install -y \
     zip \
     unzip \
     libpq-dev \
+    libicu-dev \
     nginx \
     supervisor \
     && apt-get clean \
@@ -53,6 +54,7 @@ RUN apt-get update && apt-get install -y \
     libxml2-dev \
     libzip-dev \
     libpq-dev \
+    libicu-dev \
     nginx \
     supervisor \
     cron \
