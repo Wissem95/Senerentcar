@@ -215,10 +215,12 @@ export default function AboutPage() {
                 transition={{ duration: 0.8 }}
                 className="relative"
               >
-                <img
-                  src="https://images.unsplash.com/photo-1449824913935-59a10b8d2000?w=600&h=400&fit=crop"
+                <Image
+                  src="/images/senegal/image.png"
                   alt="Véhicules Senerentcar au Sénégal"
-                  className="rounded-2xl shadow-2xl"
+                  width={600}
+                  height={400}
+                  className="rounded-2xl shadow-2xl object-cover"
                 />
                 <div className="absolute -bottom-6 -left-6 bg-senegal-green text-white p-6 rounded-xl">
                   <div className="text-2xl font-bold">100%</div>

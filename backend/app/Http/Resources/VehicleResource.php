@@ -31,7 +31,7 @@ class VehicleResource extends JsonResource
             'doors' => $this->doors,
             'air_conditioning' => $this->air_conditioning,
             'price_per_day' => number_format($this->price_per_day, 2),
-            'images' => $this->images ?? [],
+            'images' => $this->formatImages($this->images ?? []),
             'description' => $this->description,
             'features' => $this->features ?? [],
             'location' => $this->location,
@@ -52,5 +52,24 @@ class VehicleResource extends JsonResource
             'created_at' => $this->created_at->toISOString(),
             'updated_at' => $this->updated_at->toISOString(),
         ];
+    }
+    
+    /**
+     * Format images URLs to include the full frontend URL
+     *
+     * @param array $images
+     * @return array
+     */
+    private function formatImages(array $images): array
+    {
+        return array_map(function ($image) {
+            // If the image starts with http, it's already a full URL
+            if (str_starts_with($image, 'http')) {
+                return $image;
+            }
+            // Otherwise, prepend the frontend URL
+            $frontendUrl = env('FRONTEND_URL', 'http://localhost:3000');
+            return $frontendUrl . $image;
+        }, $images);
     }
 }

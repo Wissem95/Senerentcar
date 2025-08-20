@@ -164,8 +164,8 @@ export default function CataloguePage() {
                         />
                       </div>
                       <div className="flex items-center justify-between text-sm text-gray-600">
-                        <span>{filters.priceMin.toLocaleString()} FCFA</span>
-                        <span>{filters.priceMax.toLocaleString()} FCFA</span>
+                        <span>{filters.priceMin.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ' ')} FCFA</span>
+                        <span>{filters.priceMax.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ' ')} FCFA</span>
                       </div>
                       <div className="flex items-center gap-2">
                         <input

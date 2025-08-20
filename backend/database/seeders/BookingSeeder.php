@@ -26,7 +26,7 @@ class BookingSeeder extends Seeder
         $bookings = [
             [
                 'user_id' => $users->first()->id,
-                'vehicle_id' => $vehicles->where('name', 'Renault Clio')->first()->id,
+                'vehicle_id' => $vehicles->where('name', 'Toyota Yaris')->first()->id,
                 'start_date' => now()->addDays(5),
                 'end_date' => now()->addDays(8),
                 'pickup_location' => 'Aéroport Léopold Sédar Senghor - Dakar',
@@ -43,7 +43,7 @@ class BookingSeeder extends Seeder
             ],
             [
                 'user_id' => $users->first()->id,
-                'vehicle_id' => $vehicles->where('name', 'Toyota Camry')->first()->id,
+                'vehicle_id' => $vehicles->where('name', 'Toyota Corolla')->first()->id,
                 'start_date' => now()->addDays(10),
                 'end_date' => now()->addDays(15),
                 'pickup_location' => 'Place de l\'Indépendance - Dakar',
