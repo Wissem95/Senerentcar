@@ -113,8 +113,8 @@ RUN php artisan route:cache \
 # Add crontab for Laravel scheduler
 RUN echo "* * * * * www-data cd /var/www/html && php artisan schedule:run >> /dev/null 2>&1" >> /etc/crontab
 
-# Expose port for Railway
-EXPOSE 8000
+# Expose port for Railway (Railway sets PORT automatically)
+EXPOSE $PORT
 
 # Start with simple PHP artisan serve (avoids nginx issues)
-CMD ["sh", "-c", "php artisan config:clear && php artisan migrate --force && php artisan serve --host=0.0.0.0 --port=${PORT:-8000}"]
+CMD ["sh", "-c", "echo \"Starting server on port ${PORT:-8000}\" && php artisan config:clear && php artisan migrate --force && php artisan serve --host=0.0.0.0 --port=${PORT:-8000}"]
