@@ -68,7 +68,7 @@ class VehicleResource extends JsonResource
                 return $image;
             }
             // Otherwise, prepend the frontend URL
-            $frontendUrl = env('FRONTEND_URL', 'http://localhost:3000');
+            $frontendUrl = env('FRONTEND_URL', 'https://senerentcar.vercel.app');
             return $frontendUrl . $image;
         }, $images);
     }
