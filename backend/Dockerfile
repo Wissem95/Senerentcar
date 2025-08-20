@@ -19,10 +19,10 @@ RUN apt-get update && apt-get install -y \
     && apt-get clean \
     && rm -rf /var/lib/apt/lists/*
 
-# Install PHP extensions (MySQL instead of PostgreSQL)
+# Install PHP extensions (PostgreSQL for Supabase)
 RUN docker-php-ext-install \
-    pdo_mysql \
-    mysqli \
+    pdo_pgsql \
+    pgsql \
     mbstring \
     exif \
     pcntl \
@@ -58,10 +58,10 @@ RUN apt-get update && apt-get install -y \
     && apt-get clean \
     && rm -rf /var/lib/apt/lists/*
 
-# Install PHP extensions (MySQL instead of PostgreSQL)
+# Install PHP extensions (PostgreSQL for Supabase)
 RUN docker-php-ext-install \
-    pdo_mysql \
-    mysqli \
+    pdo_pgsql \
+    pgsql \
     mbstring \
     exif \
     pcntl \
