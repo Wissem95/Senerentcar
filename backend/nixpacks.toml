@@ -11,7 +11,8 @@ APP_URL = "https://senerentcar-production.up.railway.app"
 FRONTEND_URL = "https://senerentcar.vercel.app"
 
 [phases.setup]
-nixPkgs = ["php82", "php82Extensions.pdo_pgsql", "php82Extensions.mbstring", "php82Extensions.gd", "php82Extensions.zip", "php82Extensions.bcmath", "composer"]
+aptPkgs = ["php8.2", "php8.2-pgsql", "php8.2-mbstring", "php8.2-gd", "php8.2-zip", "php8.2-bcmath", "php8.2-curl", "php8.2-xml"]
+nixPkgs = ["composer"]
 
 [phases.install]
 cmds = [
