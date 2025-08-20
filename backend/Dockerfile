@@ -72,5 +72,5 @@ RUN echo "* * * * * www-data cd /var/www/html && php artisan schedule:run >> /de
 # Expose port for Railway (Railway sets PORT automatically)
 EXPOSE $PORT
 
-# ULTRA SIMPLE: Direct PHP server (nginx complexe = problématique)
-CMD ["sh", "-c", "php artisan config:clear && php artisan migrate --force && php artisan serve --host=0.0.0.0 --port=$PORT --no-reload"]
+# PHP Built-in server for Railway (with proper routing)
+CMD ["sh", "-c", "php artisan config:clear && php artisan migrate --force && php -S 0.0.0.0:$PORT -t public server.php"]
