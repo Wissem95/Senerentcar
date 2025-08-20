@@ -48,9 +48,7 @@ mkdir -p /var/log/php
 # Generate nginx configuration from template with Railway PORT
 echo "🔧 Generating nginx configuration for Railway..."
 export NGINX_PORT=$PORT
-envsubst '${NGINX_PORT}' < /etc/nginx/nginx.conf.template > /etc/nginx/sites-available/default
-rm -f /etc/nginx/sites-enabled/default
-ln -sf /etc/nginx/sites-available/default /etc/nginx/sites-enabled/default
+envsubst '${NGINX_PORT}' < /etc/nginx/nginx.conf.template > /etc/nginx/nginx.conf
 
 echo "✅ Nginx configured to listen on port: $NGINX_PORT"
 
