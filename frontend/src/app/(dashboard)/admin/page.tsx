@@ -73,21 +73,23 @@ export default function AdminDashboard() {
   return (
     <AdminLayout>
       <div className="min-h-screen bg-gradient-to-br from-slate-50 via-white to-slate-100 dark:from-slate-900 dark:via-slate-800 dark:to-slate-900">
-        <div className="space-y-8 p-4 sm:p-6 lg:p-8">
+        <div className="w-full max-w-none space-y-6 sm:space-y-8 p-3 sm:p-4 md:p-6 lg:p-8 xl:p-10">
           {/* Page header */}
-          <div className="flex items-center justify-between bg-white/80 dark:bg-slate-800/80 backdrop-blur-sm rounded-2xl p-6 shadow-lg border border-slate-200/50 dark:border-slate-700/50">
-            <div>
-              <h1 className="text-3xl font-bold bg-gradient-to-r from-emerald-600 to-teal-600 bg-clip-text text-transparent">
-                Dashboard Admin
-              </h1>
-              <p className="text-slate-600 dark:text-slate-400 mt-1">
-                Vue d'ensemble de votre activité de location de véhicules
-              </p>
+          <section className="w-full">
+            <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between bg-white/80 dark:bg-slate-800/80 backdrop-blur-sm rounded-2xl p-4 sm:p-6 lg:p-8 shadow-lg border border-slate-200/50 dark:border-slate-700/50 gap-4 sm:gap-6">
+              <div className="flex-1">
+                <h1 className="text-2xl sm:text-3xl lg:text-4xl font-bold bg-gradient-to-r from-emerald-600 to-teal-600 bg-clip-text text-transparent">
+                  Dashboard Admin
+                </h1>
+                <p className="text-slate-600 dark:text-slate-400 mt-1 text-sm sm:text-base lg:text-lg">
+                  Vue d'ensemble complète de votre activité de location de véhicules
+                </p>
+              </div>
+              <Button className="w-full sm:w-auto bg-gradient-to-r from-emerald-500 to-teal-600 hover:from-emerald-600 hover:to-teal-700 text-white shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-105 px-6 py-3">
+                📊 Générer un rapport
+              </Button>
             </div>
-            <Button className="bg-gradient-to-r from-emerald-500 to-teal-600 hover:from-emerald-600 hover:to-teal-700 text-white shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-105">
-              📊 Générer un rapport
-            </Button>
-          </div>
+          </section>
 
           {/* Error State */}
           {error && (
@@ -115,178 +117,194 @@ export default function AdminDashboard() {
           )}
 
           {/* Stats cards */}
-          {loading ? (
-            <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-4">
-              {[1, 2, 3, 4].map((i) => (
-                <Card key={i} className="p-8 bg-white/80 backdrop-blur-sm shadow-xl border-0">
-                  <div className="animate-pulse">
-                    <div className="flex items-center">
-                      <div className="h-14 w-14 bg-gradient-to-br from-slate-200 to-slate-300 rounded-2xl"></div>
-                      <div className="ml-6 flex-1">
-                        <div className="h-5 bg-gradient-to-r from-slate-200 to-slate-300 rounded-full w-3/4 mb-3"></div>
-                        <div className="h-8 bg-gradient-to-r from-slate-200 to-slate-300 rounded-full w-1/2"></div>
-                      </div>
-                    </div>
-                    <div className="mt-6">
-                      <div className="h-5 bg-gradient-to-r from-slate-200 to-slate-300 rounded-full w-1/3"></div>
-                    </div>
-                  </div>
-                </Card>
-              ))}
-            </div>
-          ) : (
-            <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-4">
-              {statsCards.map((stat, index) => (
-              <motion.div
-                key={stat.title}
-                initial={{ opacity: 0, y: 30, scale: 0.9 }}
-                animate={{ opacity: 1, y: 0, scale: 1 }}
-                transition={{ delay: index * 0.15, type: "spring", stiffness: 100 }}
-                whileHover={{ scale: 1.05, y: -5 }}
-                className="group"
-              >
-                <Card className={`relative p-8 ${stat.bgColor} dark:bg-slate-800 shadow-xl hover:shadow-2xl transition-all duration-500 border-0 overflow-hidden group-hover:shadow-lg`}>
-                  <div className={`absolute inset-0 bg-gradient-to-br ${stat.gradient} opacity-5 group-hover:opacity-10 transition-opacity duration-500`}></div>
-                  <div className="relative z-10">
-                    <div className="flex items-center justify-between mb-6">
+          <section className="w-full">
+            {loading ? (
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6 lg:gap-8">
+                {[1, 2, 3, 4].map((i) => (
+                  <Card key={i} className="p-6 sm:p-8 bg-white/80 backdrop-blur-sm shadow-xl border-0 min-h-[180px]">
+                    <div className="animate-pulse">
                       <div className="flex items-center">
-                        <div className={`flex h-16 w-16 items-center justify-center rounded-2xl bg-gradient-to-br ${stat.gradient} shadow-lg transform group-hover:scale-110 transition-transform duration-300`}>
-                          <stat.icon className="h-8 w-8 text-white" />
-                        </div>
-                        <div className="ml-6">
-                          <p className="text-sm font-semibold text-slate-600 dark:text-slate-300 uppercase tracking-wide">
-                            {stat.title}
-                          </p>
-                          <p className="text-3xl font-bold text-slate-800 dark:text-white mt-1">
-                            {stat.value}
-                          </p>
+                        <div className="h-12 w-12 sm:h-14 sm:w-14 bg-gradient-to-br from-slate-200 to-slate-300 rounded-2xl flex-shrink-0"></div>
+                        <div className="ml-4 sm:ml-6 flex-1 min-w-0">
+                          <div className="h-4 sm:h-5 bg-gradient-to-r from-slate-200 to-slate-300 rounded-full w-3/4 mb-2 sm:mb-3"></div>
+                          <div className="h-6 sm:h-8 bg-gradient-to-r from-slate-200 to-slate-300 rounded-full w-1/2"></div>
                         </div>
                       </div>
+                      <div className="mt-4 sm:mt-6">
+                        <div className="h-4 sm:h-5 bg-gradient-to-r from-slate-200 to-slate-300 rounded-full w-1/3"></div>
+                      </div>
                     </div>
-                    <div className="flex items-center justify-between">
-                      <Badge
-                        variant={
-                          stat.changeType === "positive"
-                            ? "default"
-                            : stat.changeType === "negative"
-                            ? "destructive"
-                            : "secondary"
-                        }
-                        className={`px-3 py-1 font-bold shadow-sm ${stat.changeType === 'positive' ? 'bg-emerald-100 text-emerald-700 border-emerald-200' : ''}`}
-                      >
-                        {stat.change}
-                      </Badge>
-                      <span className="text-sm text-slate-500 dark:text-slate-400 font-medium">
-                        {stat.description}
-                      </span>
+                  </Card>
+                ))}
+              </div>
+            ) : (
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6 lg:gap-8 w-full">
+                {statsCards.map((stat, index) => (
+                <motion.div
+                  key={stat.title}
+                  initial={{ opacity: 0, y: 30, scale: 0.9 }}
+                  animate={{ opacity: 1, y: 0, scale: 1 }}
+                  transition={{ delay: index * 0.1, type: "spring", stiffness: 120 }}
+                  whileHover={{ scale: 1.02, y: -3 }}
+                  className="group w-full"
+                >
+                  <Card className={`relative p-6 sm:p-8 ${stat.bgColor} dark:bg-slate-800 shadow-xl hover:shadow-2xl transition-all duration-500 border-0 overflow-hidden h-full min-h-[180px] flex flex-col justify-between`}>
+                    <div className={`absolute inset-0 bg-gradient-to-br ${stat.gradient} opacity-5 group-hover:opacity-10 transition-opacity duration-500`}></div>
+                    <div className="relative z-10 h-full flex flex-col justify-between">
+                      <div className="flex items-center justify-between mb-4 sm:mb-6">
+                        <div className="flex items-center w-full">
+                          <div className={`flex h-12 w-12 sm:h-16 sm:w-16 items-center justify-center rounded-2xl bg-gradient-to-br ${stat.gradient} shadow-lg transform group-hover:scale-105 transition-transform duration-300 flex-shrink-0`}>
+                            <stat.icon className="h-6 w-6 sm:h-8 sm:w-8 text-white" />
+                          </div>
+                          <div className="ml-4 sm:ml-6 flex-1 min-w-0">
+                            <p className="text-xs sm:text-sm font-semibold text-slate-600 dark:text-slate-300 uppercase tracking-wide truncate">
+                              {stat.title}
+                            </p>
+                            <p className="text-2xl sm:text-3xl font-bold text-slate-800 dark:text-white mt-1 truncate">
+                              {stat.value}
+                            </p>
+                          </div>
+                        </div>
+                      </div>
+                      <div className="flex items-center justify-between gap-2">
+                        <Badge
+                          variant={
+                            stat.changeType === "positive"
+                              ? "default"
+                              : stat.changeType === "negative"
+                              ? "destructive"
+                              : "secondary"
+                          }
+                          className={`px-2 sm:px-3 py-1 font-bold shadow-sm text-xs sm:text-sm ${stat.changeType === 'positive' ? 'bg-emerald-100 text-emerald-700 border-emerald-200' : ''} flex-shrink-0`}
+                        >
+                          {stat.change}
+                        </Badge>
+                        <span className="text-xs sm:text-sm text-slate-500 dark:text-slate-400 font-medium truncate">
+                          {stat.description}
+                        </span>
+                      </div>
                     </div>
-                  </div>
-                </Card>
-              </motion.div>
-              ))}
-            </div>
-        )}
+                  </Card>
+                </motion.div>
+                ))}
+              </div>
+            )}
+          </section>
 
           {/* Charts section */}
-          <div className="grid grid-cols-1 gap-8 lg:grid-cols-2">
-            <Card className="p-8 bg-white/80 dark:bg-slate-800/80 backdrop-blur-sm shadow-xl border-0">
-              <div className="flex items-center mb-6">
-                <div className="h-12 w-12 bg-gradient-to-br from-emerald-500 to-teal-600 rounded-xl flex items-center justify-center mr-4">
-                  <TrendingUp className="h-6 w-6 text-white" />
+          <section className="w-full">
+            <div className="grid grid-cols-1 xl:grid-cols-2 gap-6 sm:gap-8 lg:gap-10">
+              <Card className="p-6 sm:p-8 lg:p-10 bg-white/80 dark:bg-slate-800/80 backdrop-blur-sm shadow-xl border-0 h-full">
+                <div className="flex items-center mb-6 sm:mb-8">
+                  <div className="h-10 w-10 sm:h-12 sm:w-12 bg-gradient-to-br from-emerald-500 to-teal-600 rounded-xl flex items-center justify-center mr-3 sm:mr-4 flex-shrink-0">
+                    <TrendingUp className="h-5 w-5 sm:h-6 sm:w-6 text-white" />
+                  </div>
+                  <h3 className="text-lg sm:text-xl lg:text-2xl font-bold text-slate-800 dark:text-white">
+                    📊 Revenus mensuels
+                  </h3>
                 </div>
-                <h3 className="text-xl font-bold text-slate-800 dark:text-white">
-                  📊 Revenus mensuels
-                </h3>
-              </div>
-              <DashboardChart type="revenue" />
-            </Card>
-            
-            <Card className="p-8 bg-white/80 dark:bg-slate-800/80 backdrop-blur-sm shadow-xl border-0">
-              <div className="flex items-center mb-6">
-                <div className="h-12 w-12 bg-gradient-to-br from-blue-500 to-indigo-600 rounded-xl flex items-center justify-center mr-4">
-                  <Car className="h-6 w-6 text-white" />
+                <div className="w-full overflow-hidden">
+                  <DashboardChart type="revenue" />
                 </div>
-                <h3 className="text-xl font-bold text-slate-800 dark:text-white">
-                  🚗 Véhicules populaires
-                </h3>
-              </div>
-              <DashboardChart type="vehicles" />
-            </Card>
-          </div>
+              </Card>
+              
+              <Card className="p-6 sm:p-8 lg:p-10 bg-white/80 dark:bg-slate-800/80 backdrop-blur-sm shadow-xl border-0 h-full">
+                <div className="flex items-center mb-6 sm:mb-8">
+                  <div className="h-10 w-10 sm:h-12 sm:w-12 bg-gradient-to-br from-blue-500 to-indigo-600 rounded-xl flex items-center justify-center mr-3 sm:mr-4 flex-shrink-0">
+                    <Car className="h-5 w-5 sm:h-6 sm:w-6 text-white" />
+                  </div>
+                  <h3 className="text-lg sm:text-xl lg:text-2xl font-bold text-slate-800 dark:text-white">
+                    🚗 Véhicules populaires
+                  </h3>
+                </div>
+                <div className="w-full overflow-hidden">
+                  <DashboardChart type="vehicles" />
+                </div>
+              </Card>
+            </div>
+          </section>
 
           {/* Recent activity section */}
-          <div className="grid grid-cols-1 gap-8 lg:grid-cols-2">
-            <Card className="p-8 bg-white/80 dark:bg-slate-800/80 backdrop-blur-sm shadow-xl border-0">
-              <div className="flex items-center justify-between mb-6">
-                <div className="flex items-center">
-                  <div className="h-12 w-12 bg-gradient-to-br from-amber-500 to-orange-600 rounded-xl flex items-center justify-center mr-4">
-                    <Calendar className="h-6 w-6 text-white" />
+          <section className="w-full">
+            <div className="grid grid-cols-1 xl:grid-cols-2 gap-6 sm:gap-8 lg:gap-10">
+              <Card className="p-6 sm:p-8 lg:p-10 bg-white/80 dark:bg-slate-800/80 backdrop-blur-sm shadow-xl border-0 h-full">
+                <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between mb-6 sm:mb-8 gap-4 sm:gap-6">
+                  <div className="flex items-center">
+                    <div className="h-10 w-10 sm:h-12 sm:w-12 bg-gradient-to-br from-amber-500 to-orange-600 rounded-xl flex items-center justify-center mr-3 sm:mr-4 flex-shrink-0">
+                      <Calendar className="h-5 w-5 sm:h-6 sm:w-6 text-white" />
+                    </div>
+                    <h3 className="text-lg sm:text-xl lg:text-2xl font-bold text-slate-800 dark:text-white">
+                      📅 Réservations récentes
+                    </h3>
                   </div>
-                  <h3 className="text-xl font-bold text-slate-800 dark:text-white">
-                    📅 Réservations récentes
-                  </h3>
+                  <Button 
+                    variant="outline" 
+                    size="sm"
+                    className="w-full sm:w-auto border-amber-200 text-amber-600 hover:bg-amber-50 hover:border-amber-300 transition-all duration-300"
+                  >
+                    Voir tout
+                  </Button>
                 </div>
-                <Button 
-                  variant="outline" 
-                  size="sm"
-                  className="border-amber-200 text-amber-600 hover:bg-amber-50 hover:border-amber-300 transition-all duration-300"
-                >
-                  Voir tout
-                </Button>
-              </div>
-              <RecentBookings />
-            </Card>
+                <div className="w-full overflow-hidden">
+                  <RecentBookings />
+                </div>
+              </Card>
 
-            <Card className="p-8 bg-white/80 dark:bg-slate-800/80 backdrop-blur-sm shadow-xl border-0">
-              <div className="flex items-center justify-between mb-6">
-                <div className="flex items-center">
-                  <div className="h-12 w-12 bg-gradient-to-br from-red-500 to-rose-600 rounded-xl flex items-center justify-center mr-4">
-                    <AlertTriangle className="h-6 w-6 text-white" />
+              <Card className="p-6 sm:p-8 lg:p-10 bg-white/80 dark:bg-slate-800/80 backdrop-blur-sm shadow-xl border-0 h-full">
+                <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between mb-6 sm:mb-8 gap-4 sm:gap-6">
+                  <div className="flex items-center">
+                    <div className="h-10 w-10 sm:h-12 sm:w-12 bg-gradient-to-br from-red-500 to-rose-600 rounded-xl flex items-center justify-center mr-3 sm:mr-4 flex-shrink-0">
+                      <AlertTriangle className="h-5 w-5 sm:h-6 sm:w-6 text-white" />
+                    </div>
+                    <h3 className="text-lg sm:text-xl lg:text-2xl font-bold text-slate-800 dark:text-white">
+                      ⚠️ Alertes maintenance
+                    </h3>
                   </div>
-                  <h3 className="text-xl font-bold text-slate-800 dark:text-white">
-                    ⚠️ Alertes maintenance
-                  </h3>
+                  <Badge 
+                    variant="destructive" 
+                    className="bg-gradient-to-r from-red-500 to-rose-600 text-white shadow-lg px-3 py-1 font-bold"
+                  >
+                    3
+                  </Badge>
                 </div>
-                <Badge 
-                  variant="destructive" 
-                  className="bg-gradient-to-r from-red-500 to-rose-600 text-white shadow-lg px-3 py-1 font-bold"
-                >
-                  3
-                </Badge>
-              </div>
-              <MaintenanceAlerts />
-            </Card>
-          </div>
+                <div className="w-full overflow-hidden">
+                  <MaintenanceAlerts />
+                </div>
+              </Card>
+            </div>
+          </section>
 
           {/* Quick actions */}
-          <Card className="p-8 bg-white/80 dark:bg-slate-800/80 backdrop-blur-sm shadow-xl border-0">
-            <div className="flex items-center mb-8">
-              <div className="h-12 w-12 bg-gradient-to-br from-purple-500 to-pink-600 rounded-xl flex items-center justify-center mr-4">
-                <CheckCircle className="h-6 w-6 text-white" />
+          <section className="w-full">
+            <Card className="p-6 sm:p-8 lg:p-10 bg-white/80 dark:bg-slate-800/80 backdrop-blur-sm shadow-xl border-0">
+              <div className="flex items-center mb-6 sm:mb-8 lg:mb-10">
+                <div className="h-10 w-10 sm:h-12 sm:w-12 bg-gradient-to-br from-purple-500 to-pink-600 rounded-xl flex items-center justify-center mr-3 sm:mr-4 flex-shrink-0">
+                  <CheckCircle className="h-5 w-5 sm:h-6 sm:w-6 text-white" />
+                </div>
+                <h3 className="text-xl sm:text-2xl lg:text-3xl font-bold text-slate-800 dark:text-white">
+                  ⚡ Actions rapides
+                </h3>
               </div>
-              <h3 className="text-2xl font-bold text-slate-800 dark:text-white">
-                ⚡ Actions rapides
-              </h3>
-            </div>
-            <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-4">
-              <Button className="h-24 flex-col space-y-3 bg-gradient-to-br from-emerald-500 to-teal-600 hover:from-emerald-600 hover:to-teal-700 text-white shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-105 border-0">
-                <Car className="h-7 w-7" />
-                <span className="font-semibold">🚗 Ajouter véhicule</span>
-              </Button>
-              <Button variant="outline" className="h-24 flex-col space-y-3 border-2 border-amber-200 text-amber-600 hover:bg-gradient-to-br hover:from-amber-50 hover:to-orange-50 hover:border-amber-300 shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-105">
-                <Calendar className="h-7 w-7" />
-                <span className="font-semibold">📅 Nouvelle réservation</span>
-              </Button>
-              <Button variant="outline" className="h-24 flex-col space-y-3 border-2 border-purple-200 text-purple-600 hover:bg-gradient-to-br hover:from-purple-50 hover:to-pink-50 hover:border-purple-300 shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-105">
-                <Users className="h-7 w-7" />
-                <span className="font-semibold">👥 Gestion clients</span>
-              </Button>
-              <Button variant="outline" className="h-24 flex-col space-y-3 border-2 border-blue-200 text-blue-600 hover:bg-gradient-to-br hover:from-blue-50 hover:to-indigo-50 hover:border-blue-300 shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-105">
-                <TrendingUp className="h-7 w-7" />
-                <span className="font-semibold">📊 Rapports</span>
-              </Button>
-            </div>
-          </Card>
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6 lg:gap-8 w-full">
+                <Button className="h-20 sm:h-24 lg:h-28 flex-col space-y-2 sm:space-y-3 bg-gradient-to-br from-emerald-500 to-teal-600 hover:from-emerald-600 hover:to-teal-700 text-white shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-105 border-0 w-full">
+                  <Car className="h-6 w-6 sm:h-7 sm:w-7 lg:h-8 lg:w-8" />
+                  <span className="font-semibold text-sm sm:text-base lg:text-lg">🚗 Ajouter véhicule</span>
+                </Button>
+                <Button variant="outline" className="h-20 sm:h-24 lg:h-28 flex-col space-y-2 sm:space-y-3 border-2 border-amber-200 text-amber-600 hover:bg-gradient-to-br hover:from-amber-50 hover:to-orange-50 hover:border-amber-300 shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-105 w-full">
+                  <Calendar className="h-6 w-6 sm:h-7 sm:w-7 lg:h-8 lg:w-8" />
+                  <span className="font-semibold text-sm sm:text-base lg:text-lg">📅 Nouvelle réservation</span>
+                </Button>
+                <Button variant="outline" className="h-20 sm:h-24 lg:h-28 flex-col space-y-2 sm:space-y-3 border-2 border-purple-200 text-purple-600 hover:bg-gradient-to-br hover:from-purple-50 hover:to-pink-50 hover:border-purple-300 shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-105 w-full">
+                  <Users className="h-6 w-6 sm:h-7 sm:w-7 lg:h-8 lg:w-8" />
+                  <span className="font-semibold text-sm sm:text-base lg:text-lg">👥 Gestion clients</span>
+                </Button>
+                <Button variant="outline" className="h-20 sm:h-24 lg:h-28 flex-col space-y-2 sm:space-y-3 border-2 border-blue-200 text-blue-600 hover:bg-gradient-to-br hover:from-blue-50 hover:to-indigo-50 hover:border-blue-300 shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-105 w-full">
+                  <TrendingUp className="h-6 w-6 sm:h-7 sm:w-7 lg:h-8 lg:w-8" />
+                  <span className="font-semibold text-sm sm:text-base lg:text-lg">📊 Rapports</span>
+                </Button>
+              </div>
+            </Card>
+          </section>
         </div>
       </div>
     </AdminLayout>

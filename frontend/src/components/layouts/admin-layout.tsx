@@ -249,8 +249,8 @@ export function AdminLayout({ children }: AdminLayoutProps) {
 
           {/* Page content */}
           <main className="flex-1 overflow-y-auto bg-gray-50 dark:bg-gray-800">
-            <div className="py-6">
-              <div className="mx-auto max-w-full px-4 sm:px-6 lg:px-8">
+            <div className="py-4 sm:py-6">
+              <div className="w-full max-w-none px-2 sm:px-4 md:px-6 lg:px-8">
                 {children}
               </div>
             </div>
