@@ -3,11 +3,11 @@ APP_ENV = "production"
 APP_DEBUG = "true"
 APP_KEY = "base64:ii/Hf8Tfyd9BaCByj8ZpT/4ONdLgTRJ/d2B67p785NI="
 DB_CONNECTION = "mysql"
-DB_HOST = "${MYSQL_HOST}"
-DB_PORT = "${MYSQL_PORT}"
-DB_DATABASE = "${MYSQL_DATABASE}"
-DB_USERNAME = "${MYSQL_USER}"
-DB_PASSWORD = "${MYSQL_PASSWORD}"
+DB_HOST = "${MYSQLHOST}"
+DB_PORT = "${MYSQLPORT}"
+DB_DATABASE = "${MYSQLDATABASE}"
+DB_USERNAME = "${MYSQLUSER}"
+DB_PASSWORD = "${MYSQLPASSWORD}"
 
 [phases.setup]
 nixPkgs = ["php82", "php82Extensions.pdo_mysql", "php82Extensions.mbstring", "php82Extensions.gd", "php82Extensions.zip", "php82Extensions.bcmath", "composer"]
@@ -20,11 +20,13 @@ cmds = [
 [phases.build]
 cmds = [
     "echo 'Environment variables check:'",
-    "echo 'MYSQL_HOST='$MYSQL_HOST",
-    "echo 'MYSQL_PORT='$MYSQL_PORT", 
-    "echo 'MYSQL_DATABASE='$MYSQL_DATABASE",
-    "echo 'MYSQL_USER='$MYSQL_USER",
-    "echo 'PORT='$PORT"
+    "echo 'MYSQLHOST='$MYSQLHOST",
+    "echo 'MYSQLPORT='$MYSQLPORT", 
+    "echo 'MYSQLDATABASE='$MYSQLDATABASE",
+    "echo 'MYSQLUSER='$MYSQLUSER",
+    "echo 'PORT='$PORT",
+    "php artisan migrate --force",
+    "php artisan db:seed --force"
 ]
 
 [start]

@@ -1,26 +1,24 @@
 <?php
 echo json_encode([
-    'env_check' => [
-        'MYSQL_HOST' => $_ENV['MYSQL_HOST'] ?? 'NOT_SET',
-        'MYSQL_PORT' => $_ENV['MYSQL_PORT'] ?? 'NOT_SET',
-        'MYSQL_DATABASE' => $_ENV['MYSQL_DATABASE'] ?? 'NOT_SET',
-        'MYSQL_USER' => $_ENV['MYSQL_USER'] ?? 'NOT_SET',
-        'MYSQL_PASSWORD' => !empty($_ENV['MYSQL_PASSWORD']) ? 'SET' : 'NOT_SET',
-        'DB_HOST' => $_ENV['DB_HOST'] ?? 'NOT_SET',
-        'DB_PORT' => $_ENV['DB_PORT'] ?? 'NOT_SET',
-        'DB_DATABASE' => $_ENV['DB_DATABASE'] ?? 'NOT_SET',
-        'DB_USERNAME' => $_ENV['DB_USERNAME'] ?? 'NOT_SET',
-        'DB_PASSWORD' => !empty($_ENV['DB_PASSWORD']) ? 'SET' : 'NOT_SET',
+    'railway_mysql_vars' => [
+        'MYSQLHOST' => $_SERVER['MYSQLHOST'] ?? 'NOT_SET',
+        'MYSQLPORT' => $_SERVER['MYSQLPORT'] ?? 'NOT_SET',
+        'MYSQLDATABASE' => $_SERVER['MYSQLDATABASE'] ?? 'NOT_SET', 
+        'MYSQLUSER' => $_SERVER['MYSQLUSER'] ?? 'NOT_SET',
+        'MYSQLPASSWORD' => !empty($_SERVER['MYSQLPASSWORD']) ? 'SET' : 'NOT_SET'
     ],
-    'server_vars' => [
-        'MYSQL_HOST' => $_SERVER['MYSQL_HOST'] ?? 'NOT_SET',
-        'MYSQL_PORT' => $_SERVER['MYSQL_PORT'] ?? 'NOT_SET', 
-        'MYSQL_DATABASE' => $_SERVER['MYSQL_DATABASE'] ?? 'NOT_SET',
-        'MYSQL_USER' => $_SERVER['MYSQL_USER'] ?? 'NOT_SET',
-        'DATABASE_URL' => $_SERVER['DATABASE_URL'] ?? 'NOT_SET'
+    'laravel_db_vars' => [
+        'DB_HOST' => $_SERVER['DB_HOST'] ?? 'NOT_SET',
+        'DB_PORT' => $_SERVER['DB_PORT'] ?? 'NOT_SET',
+        'DB_DATABASE' => $_SERVER['DB_DATABASE'] ?? 'NOT_SET',
+        'DB_USERNAME' => $_SERVER['DB_USERNAME'] ?? 'NOT_SET',
+        'DB_PASSWORD' => !empty($_SERVER['DB_PASSWORD']) ? 'SET' : 'NOT_SET',
+        'DB_CONNECTION' => $_SERVER['DB_CONNECTION'] ?? 'NOT_SET'
     ],
-    'all_mysql_vars' => array_filter($_SERVER, function($key) {
-        return strpos($key, 'MYSQL') !== false || strpos($key, 'DB_') !== false || strpos($key, 'DATABASE') !== false;
-    }, ARRAY_FILTER_USE_KEY)
+    'connection_test' => [
+        'host' => $_SERVER['MYSQLHOST'] ?? 'mysql.railway.internal',
+        'port' => $_SERVER['MYSQLPORT'] ?? '3306',
+        'database' => $_SERVER['MYSQLDATABASE'] ?? 'railway'
+    ]
 ], JSON_PRETTY_PRINT);
 ?>
