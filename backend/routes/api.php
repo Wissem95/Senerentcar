@@ -146,6 +146,61 @@ Route::middleware(['auth:sanctum'])->group(function () {
 // Admin routes (require admin or manager role)
 Route::middleware(['auth:sanctum', 'role:admin,manager'])->group(function () {
     
+    // Admin dashboard stats
+    Route::get('/admin/dashboard/stats', function () {
+        try {
+            // Statistiques générales
+            $totalVehicles = \App\Models\Vehicle::count();
+            $availableVehicles = \App\Models\Vehicle::where('status', 'available')->count();
+            $totalBookings = \App\Models\Booking::count();
+            $totalRevenue = \App\Models\Booking::where('status', 'completed')->sum('total_amount');
+            
+            // Véhicules populaires (top 5)
+            $popularVehicles = \App\Models\Vehicle::withCount('bookings')
+                ->orderBy('bookings_count', 'desc')
+                ->limit(5)
+                ->get(['id', 'name', 'bookings_count'])
+                ->map(function ($vehicle) {
+                    return [
+                        'name' => $vehicle->name,
+                        'bookings' => $vehicle->bookings_count
+                    ];
+                });
+            
+            // Revenus mensuels (6 derniers mois)
+            $monthlyRevenue = [];
+            $months = ['Jan', 'Fév', 'Mar', 'Avr', 'Mai', 'Jun'];
+            for ($i = 5; $i >= 0; $i--) {
+                $date = now()->subMonths($i);
+                $revenue = \App\Models\Booking::whereYear('created_at', $date->year)
+                    ->whereMonth('created_at', $date->month)
+                    ->where('status', 'completed')
+                    ->sum('total_amount');
+                
+                $monthlyRevenue[] = [
+                    'month' => $months[5-$i] ?? $date->format('M'),
+                    'revenue' => floatval($revenue / 1000), // En milliers
+                ];
+            }
+            
+            return response()->json([
+                'overview' => [
+                    'total_vehicles' => $totalVehicles,
+                    'available_vehicles' => $availableVehicles,
+                    'total_bookings' => $totalBookings,
+                    'total_revenue' => floatval($totalRevenue),
+                ],
+                'popular_vehicles' => $popularVehicles,
+                'monthly_revenue' => $monthlyRevenue
+            ]);
+        } catch (\Exception $e) {
+            return response()->json([
+                'error' => 'Erreur lors du chargement des statistiques',
+                'message' => $e->getMessage()
+            ], 500);
+        }
+    });
+    
     // Admin vehicle management
     Route::prefix('admin/vehicles')->group(function () {
         Route::post('/', [VehicleController::class, 'store']);
