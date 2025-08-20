@@ -53,7 +53,9 @@ class ApiClient {
     localStorage.removeItem('accessToken')
     localStorage.removeItem('refreshToken')
     
-    window.location.href = '/login'
+    // DEMO MODE: Disable redirect to login
+    // window.location.href = '/login'
+    console.warn('DEMO MODE: 401 error ignored, auth disabled')
   }
 
   async get<T>(url: string, config?: AxiosRequestConfig): Promise<ApiResponse<T>> {

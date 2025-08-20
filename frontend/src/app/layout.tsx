@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
-import { AuthProvider } from "@/providers/auth-provider";
+// import { AuthProvider } from "@/providers/auth-provider"; // DISABLED FOR DEMO
 import { ThemeProvider } from "@/providers/theme-provider";
 import { NotificationProvider } from "@/components/ui/notification-system";
 import { PushNotificationProvider } from "@/components/ui/push-notifications";
@@ -127,13 +127,13 @@ export default function RootLayout({
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
         <ThemeProvider>
-          <AuthProvider>
+          {/* <AuthProvider> DISABLED FOR DEMO */}
             <NotificationProvider>
               <PushNotificationProvider>
                 {children}
               </PushNotificationProvider>
             </NotificationProvider>
-          </AuthProvider>
+          {/* </AuthProvider> */}
         </ThemeProvider>
       </body>
     </html>

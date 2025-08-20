@@ -3,7 +3,7 @@
 import { useState } from "react"
 import Link from "next/link"
 import { usePathname } from "next/navigation"
-import { useSession } from "next-auth/react"
+// import { useSession } from "next-auth/react" // DISABLED FOR DEMO
 import { motion, AnimatePresence } from "framer-motion"
 import { Menu, X, Car, User } from "lucide-react"
 import { Button } from "@/components/ui/button"
@@ -21,9 +21,12 @@ const navigation = [
 export function Navbar() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
   const pathname = usePathname()
-  const { data: session, status } = useSession()
-  const isAuthenticated = !!session
-  const isLoading = status === "loading"
+  // DEMO MODE: Disable authentication checks
+  // const { data: session, status } = useSession()
+  // const isAuthenticated = !!session  
+  // const isLoading = status === "loading"
+  const isAuthenticated = false // DEMO: Always not authenticated
+  const isLoading = false
 
   return (
     <header className="bg-white/95 backdrop-blur-md border-b border-gray-200 sticky top-0 z-50">
