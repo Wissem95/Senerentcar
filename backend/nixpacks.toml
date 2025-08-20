@@ -16,8 +16,7 @@ cmds = [
 
 [phases.build]
 cmds = [
-    "php artisan migrate --force",
-    "php artisan db:seed --force"
+    "echo 'Build phase completed - skipping migrations for debugging'"
 ]
 
 [start]
