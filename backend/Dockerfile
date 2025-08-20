@@ -116,5 +116,5 @@ RUN echo "* * * * * www-data cd /var/www/html && php artisan schedule:run >> /de
 # Expose port for Railway (Railway sets PORT automatically)
 EXPOSE $PORT
 
-# Start with simple PHP artisan serve (avoids nginx issues)
-CMD ["sh", "-c", "echo \"Starting server on port ${PORT:-8000}\" && php artisan config:clear && php artisan migrate --force && php artisan serve --host=0.0.0.0 --port=${PORT:-8000}"]
+# Start with PHP built-in server (more production ready than artisan serve)
+CMD ["sh", "-c", "echo \"Starting server on port ${PORT:-8000}\" && php artisan config:clear && php artisan migrate --force && cd public && php -S 0.0.0.0:${PORT:-8000} ../server.php"]
