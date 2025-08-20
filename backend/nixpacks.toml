@@ -22,4 +22,4 @@ cmds = [
 ]
 
 [start]
-cmd = "PORT_INT=$((PORT + 0)) && php artisan serve --host=0.0.0.0 --port=$PORT_INT"
+cmd = "export PORT_NUM=$(echo $PORT | tr -d '\"') && php artisan serve --host=0.0.0.0 --port=$PORT_NUM"
