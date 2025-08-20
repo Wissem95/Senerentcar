@@ -1,2 +1,31 @@
+[variables]
+APP_ENV = "production"
+APP_DEBUG = "true"
+APP_KEY = "base64:ii/Hf8Tfyd9BaCByj8ZpT/4ONdLgTRJ/d2B67p785NI="
+DB_CONNECTION = "mysql"
+DB_HOST = "${MYSQL_HOST}"
+DB_PORT = "${MYSQL_PORT}"
+DB_DATABASE = "${MYSQL_DATABASE}"
+DB_USERNAME = "${MYSQL_USER}"
+DB_PASSWORD = "${MYSQL_PASSWORD}"
+
+[phases.setup]
+nixPkgs = ["php82", "php82Extensions.pdo_mysql", "php82Extensions.mbstring", "php82Extensions.gd", "php82Extensions.zip", "php82Extensions.bcmath", "composer"]
+
+[phases.install]
+cmds = [
+    "composer install --optimize-autoloader --no-dev"
+]
+
+[phases.build]
+cmds = [
+    "echo 'Environment variables check:'",
+    "echo 'MYSQL_HOST='$MYSQL_HOST",
+    "echo 'MYSQL_PORT='$MYSQL_PORT", 
+    "echo 'MYSQL_DATABASE='$MYSQL_DATABASE",
+    "echo 'MYSQL_USER='$MYSQL_USER",
+    "echo 'PORT='$PORT"
+]
+
 [start]
-cmd = "php -S 0.0.0.0:$PORT -t public/"
+cmd = "php artisan serve --host=0.0.0.0 --port=$PORT"
