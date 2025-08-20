@@ -1,12 +1,6 @@
 [variables]
 APP_ENV = "production"
-APP_DEBUG = "false"  
-DB_CONNECTION = "pgsql"
-DB_HOST = "aws-1-eu-west-3.pooler.supabase.com"
-DB_PORT = "6543"
-DB_DATABASE = "postgres"
-DB_USERNAME = "postgres.phkcrceolwwzgakfvcms"
-DB_PASSWORD = "Wissem2002."
+APP_DEBUG = "false"
 APP_URL = "https://senerentcar-production.up.railway.app"
 FRONTEND_URL = "https://senerentcar.vercel.app"
 
