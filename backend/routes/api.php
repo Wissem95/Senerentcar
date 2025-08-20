@@ -195,6 +195,45 @@ Route::middleware(['auth:sanctum', 'role:admin'])->group(function () {
     // Route::apiResource('users', UserController::class);
 });
 
+// HOTFIX: Corriger les URLs d'images immédiatement
+Route::get('/fix-images-now', function () {
+    $oldDomain = 'https://senerentcar-dzl6d6fy9-wissem95s-projects.vercel.app';
+    $newDomain = 'https://senerentcar.vercel.app';
+    
+    $vehicles = \App\Models\Vehicle::all();
+    $updated = 0;
+    
+    foreach ($vehicles as $vehicle) {
+        $images = $vehicle->images; // Laravel cast automatique du JSON
+        $changed = false;
+        
+        if (is_array($images)) {
+            $newImages = [];
+            foreach ($images as $image) {
+                if (str_contains($image, $oldDomain)) {
+                    $newImages[] = str_replace($oldDomain, $newDomain, $image);
+                    $changed = true;
+                } else {
+                    $newImages[] = $image;
+                }
+            }
+            
+            if ($changed) {
+                $vehicle->images = $newImages;
+                $vehicle->save();
+                $updated++;
+            }
+        }
+    }
+    
+    return response()->json([
+        'status' => 'success',
+        'message' => "URLs d'images mises à jour",
+        'vehicles_updated' => $updated,
+        'total_vehicles' => $vehicles->count()
+    ]);
+});
+
 // Health check route
 Route::get('/health', function () {
     return response()->json([
