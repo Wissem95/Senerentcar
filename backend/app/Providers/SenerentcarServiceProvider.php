@@ -31,7 +31,7 @@ class SenerentcarServiceProvider extends ServiceProvider
     {
         // Add frontend URL to config if not set
         if (!config('app.frontend_url')) {
-            config(['app.frontend_url' => env('FRONTEND_URL', 'http://localhost:3000')]);
+            config(['app.frontend_url' => env('FRONTEND_URL', 'https://senerentcar.vercel.app')]);
         }
 
         // Set application locale to French for Senegal

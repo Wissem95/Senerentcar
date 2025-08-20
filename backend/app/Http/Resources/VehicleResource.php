@@ -67,9 +67,8 @@ class VehicleResource extends JsonResource
             if (str_starts_with($image, 'http')) {
                 return $image;
             }
-            // Otherwise, prepend the frontend URL
-            $frontendUrl = env('FRONTEND_URL', 'https://senerentcar.vercel.app');
-            return $frontendUrl . $image;
+            // Force correct Vercel URL (Railway var might be outdated)
+            return 'https://senerentcar.vercel.app' . $image;
         }, $images);
     }
 }
