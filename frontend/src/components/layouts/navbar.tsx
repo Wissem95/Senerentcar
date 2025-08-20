@@ -1,15 +1,25 @@
 "use client"
 
-import { useState } from "react"
+import React, { useState } from "react"
 import Link from "next/link"
 import { usePathname } from "next/navigation"
 // import { useSession } from "next-auth/react" // DISABLED FOR DEMO
 import { motion, AnimatePresence } from "framer-motion"
-import { Menu, X, Car, User } from "lucide-react"
+import { Menu, X, Car, User, Crown, Wrench, LogOut } from "lucide-react"
 import { Button } from "@/components/ui/button"
+import { Badge } from "@/components/ui/badge"
+import { 
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu"
 import { cn } from "@/lib/utils"
 import { NotificationBell } from "@/components/ui/push-notifications"
-import { LogoutButton } from "@/components/auth/logout-button"
+// import { LogoutButton } from "@/components/auth/logout-button" // DISABLED FOR DEMO
+import { useDemoSession } from "@/hooks/useDemoSession"
 
 const navigation = [
   { name: "Accueil", href: "/" },
@@ -21,12 +31,26 @@ const navigation = [
 export function Navbar() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
   const pathname = usePathname()
-  // DEMO MODE: Disable authentication checks
-  // const { data: session, status } = useSession()
-  // const isAuthenticated = !!session  
-  // const isLoading = status === "loading"
-  const isAuthenticated = false // DEMO: Always not authenticated
-  const isLoading = false
+  // DEMO MODE: Use demo session instead of NextAuth
+  const { user, isAuthenticated, isLoading, logout } = useDemoSession()
+
+  const getUserIcon = () => {
+    if (!user) return User
+    switch (user.type) {
+      case 'admin': return Wrench
+      case 'client-vip': return Crown
+      default: return User
+    }
+  }
+
+  const getUserBadge = () => {
+    if (!user) return null
+    switch (user.type) {
+      case 'admin': return { text: 'Admin', color: 'bg-red-100 text-red-700' }
+      case 'client-vip': return { text: 'VIP', color: 'bg-amber-100 text-amber-700' }
+      default: return { text: 'Client', color: 'bg-blue-100 text-blue-700' }
+    }
+  }
 
   return (
     <header className="bg-white/95 backdrop-blur-md border-b border-gray-200 sticky top-0 z-50">
@@ -82,32 +106,68 @@ export function Navbar() {
             <div className="flex items-center gap-x-4">
               <div className="w-16 h-8 bg-gray-200 animate-pulse rounded"></div>
             </div>
-          ) : isAuthenticated ? (
+          ) : isAuthenticated && user ? (
             <div className="flex items-center gap-x-4">
               <NotificationBell />
-              <Link href="/profile">
-                <Button variant="ghost" size="sm" className="gap-2">
-                  <User className="w-4 h-4" />
-                  Profil
-                </Button>
-              </Link>
-              <LogoutButton 
-                variant="ghost" 
-                size="sm"
-                showConfirmation={true}
-                redirectTo="/"
-              />
+              
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <Button variant="ghost" size="sm" className="gap-2 flex items-center">
+                    {React.createElement(getUserIcon(), { className: "w-4 h-4" })}
+                    <span className="hidden sm:inline">{user.name.split(' ')[0]}</span>
+                    {getUserBadge() && (
+                      <Badge className={`text-xs px-2 py-1 ${getUserBadge()!.color}`}>
+                        {getUserBadge()!.text}
+                      </Badge>
+                    )}
+                  </Button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent align="end" className="w-56">
+                  <DropdownMenuLabel>
+                    <div className="flex flex-col space-y-1">
+                      <p className="text-sm font-medium">{user.name}</p>
+                      <p className="text-xs text-muted-foreground">{user.email}</p>
+                      <Badge className={`text-xs w-fit ${getUserBadge()!.color}`}>
+                        🎯 Mode Démo - {getUserBadge()!.text}
+                      </Badge>
+                    </div>
+                  </DropdownMenuLabel>
+                  <DropdownMenuSeparator />
+                  <DropdownMenuItem asChild>
+                    <Link href="/profile" className="flex items-center">
+                      <User className="mr-2 h-4 w-4" />
+                      Mon Profil
+                    </Link>
+                  </DropdownMenuItem>
+                  {user.type === 'admin' && (
+                    <DropdownMenuItem asChild>
+                      <Link href="/admin" className="flex items-center">
+                        <Wrench className="mr-2 h-4 w-4" />
+                        Administration
+                      </Link>
+                    </DropdownMenuItem>
+                  )}
+                  <DropdownMenuSeparator />
+                  <DropdownMenuItem 
+                    onClick={logout}
+                    className="text-red-600 cursor-pointer"
+                  >
+                    <LogOut className="mr-2 h-4 w-4" />
+                    Déconnexion
+                  </DropdownMenuItem>
+                </DropdownMenuContent>
+              </DropdownMenu>
             </div>
           ) : (
             <div className="flex items-center gap-x-4">
               <Link href="/login">
                 <Button variant="ghost" size="sm">
-                  Connexion
+                  🎯 Démo
                 </Button>
               </Link>
-              <Link href="/register">
-                <Button variant="senegal" size="sm">
-                  Inscription
+              <Link href="/demo-login">
+                <Button variant="default" size="sm" className="bg-gradient-to-r from-emerald-500 to-teal-600 hover:from-emerald-600 hover:to-teal-700">
+                  Se Connecter
                 </Button>
               </Link>
             </div>
@@ -178,34 +238,62 @@ export function Navbar() {
                       <div className="space-y-2">
                         <div className="w-full h-10 bg-gray-200 animate-pulse rounded"></div>
                       </div>
-                    ) : isAuthenticated ? (
+                    ) : isAuthenticated && user ? (
                       <div className="space-y-2">
+                        <div className="bg-gradient-to-r from-emerald-50 to-teal-50 rounded-lg p-3 mb-4 border border-emerald-200">
+                          <div className="flex items-center gap-2 mb-2">
+                            {React.createElement(getUserIcon(), { className: "w-4 h-4" })}
+                            <span className="font-medium text-sm">{user.name}</span>
+                            {getUserBadge() && (
+                              <Badge className={`text-xs ${getUserBadge()!.color}`}>
+                                {getUserBadge()!.text}
+                              </Badge>
+                            )}
+                          </div>
+                          <p className="text-xs text-emerald-700">🎯 Mode Démonstration</p>
+                        </div>
+                        
                         <Link
                           href="/profile"
-                          className="-mx-3 block rounded-lg px-3 py-2.5 text-base font-semibold leading-7 text-gray-900 hover:bg-gray-50"
+                          className="-mx-3 flex items-center gap-2 rounded-lg px-3 py-2.5 text-base font-semibold leading-7 text-gray-900 hover:bg-gray-50"
                           onClick={() => setMobileMenuOpen(false)}
                         >
-                          Profil
+                          <User className="w-4 h-4" />
+                          Mon Profil
                         </Link>
-                        <div className="-mx-3 px-3">
-                          <LogoutButton 
-                            variant="ghost" 
-                            className="w-full justify-start h-auto py-2.5 px-0 text-base font-semibold leading-7 text-gray-900 hover:bg-gray-50"
-                            showConfirmation={true}
-                            redirectTo="/"
-                          />
-                        </div>
+                        
+                        {user.type === 'admin' && (
+                          <Link
+                            href="/admin"
+                            className="-mx-3 flex items-center gap-2 rounded-lg px-3 py-2.5 text-base font-semibold leading-7 text-gray-900 hover:bg-gray-50"
+                            onClick={() => setMobileMenuOpen(false)}
+                          >
+                            <Wrench className="w-4 h-4" />
+                            Administration
+                          </Link>
+                        )}
+                        
+                        <button
+                          onClick={() => {
+                            logout()
+                            setMobileMenuOpen(false)
+                          }}
+                          className="-mx-3 flex items-center gap-2 rounded-lg px-3 py-2.5 text-base font-semibold leading-7 text-red-600 hover:bg-red-50 w-full text-left"
+                        >
+                          <LogOut className="w-4 h-4" />
+                          Déconnexion
+                        </button>
                       </div>
                     ) : (
                       <div className="space-y-2">
                         <Link href="/login" onClick={() => setMobileMenuOpen(false)}>
                           <Button variant="ghost" className="w-full justify-start">
-                            Connexion
+                            🎯 Démo
                           </Button>
                         </Link>
-                        <Link href="/register" onClick={() => setMobileMenuOpen(false)}>
-                          <Button variant="senegal" className="w-full justify-start">
-                            Inscription
+                        <Link href="/demo-login" onClick={() => setMobileMenuOpen(false)}>
+                          <Button className="w-full justify-start bg-gradient-to-r from-emerald-500 to-teal-600 hover:from-emerald-600 hover:to-teal-700">
+                            Se Connecter
                           </Button>
                         </Link>
                       </div>
