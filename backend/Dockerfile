@@ -101,9 +101,9 @@ RUN mkdir -p /var/log/supervisor \
     && mkdir -p /var/log/nginx \
     && mkdir -p /var/log/php
 
-# Optimize Laravel for production
-RUN php artisan config:cache \
-    && php artisan route:cache \
+# Note: Config cache removed to allow Railway environment variables to be read dynamically
+# Route and view cache are still applied as they don't depend on environment variables
+RUN php artisan route:cache \
     && php artisan view:cache
 
 # Add crontab for Laravel scheduler

@@ -24,9 +24,9 @@ if [ ! -L "/var/www/html/public/storage" ]; then
     php artisan storage:link
 fi
 
-# Clear and cache configurations for production
-echo "⚡ Optimizing application..."
-php artisan config:cache
+# Clear configurations to ensure environment variables are read dynamically
+echo "⚡ Clearing cached configurations..."
+php artisan config:clear
 php artisan route:cache
 php artisan view:cache
 
