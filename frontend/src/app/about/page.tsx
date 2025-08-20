@@ -27,28 +27,28 @@ const teamMembers = [
   {
     name: "Amadou Diallo",
     role: "Fondateur & CEO",
-    image: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=300&h=300&fit=crop&crop=face",
+    image: "/images/personnes/Amadou Diallo .jpeg",
     description: "Expert automobile avec 15 ans d'expérience dans le secteur au Sénégal",
     linkedin: "#"
   },
   {
     name: "Fatou Sané",
     role: "Directrice Opérations",
-    image: "https://images.unsplash.com/photo-1494790108755-2616b2f55dac?w=300&h=300&fit=crop&crop=face", 
+    image: "/images/personnes/Fatou Sane.png", 
     description: "Spécialisée en logistique et gestion de flotte automobile",
     linkedin: "#"
   },
   {
     name: "Ousmane Fall",
     role: "Directeur Technique",
-    image: "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=300&h=300&fit=crop&crop=face",
+    image: "/images/personnes/Ousmane Fall.jpeg",
     description: "Ingénieur informatique, expert en solutions digitales",
     linkedin: "#"
   },
   {
     name: "Aïssa Ndiaye", 
     role: "Responsable Relation Client",
-    image: "https://images.unsplash.com/photo-1580489944761-15a19d654956?w=300&h=300&fit=crop&crop=face",
+    image: "/images/personnes/Aissa Ndiaye.jpeg",
     description: "Passionnée par le service client et l'expérience utilisateur",
     linkedin: "#"
   }
