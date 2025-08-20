@@ -121,6 +121,24 @@ Route::middleware(['auth:sanctum'])->group(function () {
         Route::put('/profile', [AuthController::class, 'updateProfile']);
         Route::post('/logout', [AuthController::class, 'logout']);
         Route::post('/refresh', [AuthController::class, 'refresh']);
+        
+        // DEBUG: Vérifier les rôles de l'utilisateur connecté
+        Route::get('/user-roles', function () {
+            $user = auth()->user();
+            return response()->json([
+                'user' => [
+                    'id' => $user->id,
+                    'email' => $user->email,
+                    'first_name' => $user->first_name,
+                    'last_name' => $user->last_name,
+                ],
+                'roles' => $user->getRoleNames(),
+                'permissions' => $user->getAllPermissions()->pluck('name'),
+                'is_admin' => $user->hasRole('admin'),
+                'is_manager' => $user->hasRole('manager'),
+                'is_customer' => $user->hasRole('customer'),
+            ]);
+        });
     });
 
     // User bookings
