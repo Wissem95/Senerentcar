@@ -236,6 +236,34 @@ Route::group([], function () {
     // Admin booking management
     Route::prefix('admin/bookings')->group(function () {
         Route::get('/', [BookingController::class, 'all']);
+        Route::get('/recent', function() {
+            try {
+                $recentBookings = \App\Models\Booking::with(['user', 'vehicle'])
+                    ->orderBy('created_at', 'desc')
+                    ->limit(10)
+                    ->get()
+                    ->map(function ($booking) {
+                        return [
+                            'id' => $booking->id,
+                            'bookingNumber' => 'SRC-' . str_pad($booking->id, 8, '0', STR_PAD_LEFT),
+                            'customerName' => $booking->user ? $booking->user->first_name . ' ' . $booking->user->last_name : 'N/A',
+                            'customerEmail' => $booking->user ? $booking->user->email : 'N/A',
+                            'vehicleName' => $booking->vehicle ? $booking->vehicle->name : 'N/A',
+                            'startDate' => $booking->start_date,
+                            'endDate' => $booking->end_date,
+                            'status' => $booking->status,
+                            'totalAmount' => $booking->total_amount
+                        ];
+                    });
+                
+                return response()->json($recentBookings);
+            } catch (\Exception $e) {
+                return response()->json([
+                    'error' => 'Erreur lors du chargement des réservations récentes',
+                    'message' => $e->getMessage()
+                ], 500);
+            }
+        });
         Route::post('/{booking}/confirm', [BookingController::class, 'confirm']);
         Route::post('/{booking}/start', [BookingController::class, 'start']);
         Route::post('/{booking}/complete', [BookingController::class, 'complete']);
@@ -259,6 +287,130 @@ Route::group([], function () {
         Route::put('/{maintenance}', [MaintenanceController::class, 'update']);
         Route::post('/{maintenance}/complete', [MaintenanceController::class, 'complete']);
         Route::delete('/{maintenance}', [MaintenanceController::class, 'destroy']);
+    });
+
+    // Admin maintenance alerts
+    Route::get('/admin/maintenance/alerts', function() {
+        try {
+            // Simulate maintenance alerts for demo
+            $alerts = [
+                [
+                    'id' => '1',
+                    'vehicleName' => 'Honda CR-V 2022',
+                    'vehicleId' => '1',
+                    'alertType' => 'maintenance_due',
+                    'message' => 'Vidange moteur en retard',
+                    'dueDate' => '2025-08-10',
+                    'priority' => 'high'
+                ],
+                [
+                    'id' => '2', 
+                    'vehicleName' => 'Toyota Land Cruiser',
+                    'vehicleId' => '2',
+                    'alertType' => 'inspection_due',
+                    'message' => 'Contrôle technique expiré',
+                    'dueDate' => '2025-08-05',
+                    'priority' => 'high'
+                ],
+                [
+                    'id' => '3',
+                    'vehicleName' => 'Ford Transit',
+                    'vehicleId' => '3',
+                    'alertType' => 'maintenance_due',
+                    'message' => 'Révision générale prévue',
+                    'dueDate' => '2025-08-25',
+                    'priority' => 'medium'
+                ]
+            ];
+            
+            return response()->json($alerts);
+        } catch (\Exception $e) {
+            return response()->json([
+                'error' => 'Erreur lors du chargement des alertes de maintenance',
+                'message' => $e->getMessage()
+            ], 500);
+        }
+    });
+
+    // Admin users management
+    Route::prefix('admin/users')->group(function () {
+        Route::get('/', function() {
+            try {
+                $users = \App\Models\User::with('roles')
+                    ->orderBy('created_at', 'desc')
+                    ->get()
+                    ->map(function ($user) {
+                        return [
+                            'id' => $user->id,
+                            'firstName' => $user->first_name,
+                            'lastName' => $user->last_name,
+                            'email' => $user->email,
+                            'phone' => $user->phone,
+                            'city' => $user->city,
+                            'roles' => $user->getRoleNames(),
+                            'status' => 'active',
+                            'createdAt' => $user->created_at,
+                            'lastLoginAt' => $user->updated_at
+                        ];
+                    });
+                
+                return response()->json($users);
+            } catch (\Exception $e) {
+                return response()->json([
+                    'error' => 'Erreur lors du chargement des utilisateurs',
+                    'message' => $e->getMessage()
+                ], 500);
+            }
+        });
+    });
+
+    // Admin analytics
+    Route::get('/admin/analytics', function() {
+        try {
+            // Simulate analytics data for demo
+            $analytics = [
+                'revenue' => [
+                    'total' => 2850000,
+                    'thisMonth' => 485000,
+                    'growth' => 12.5,
+                    'chartData' => [
+                        ['month' => 'Jan', 'revenue' => 320],
+                        ['month' => 'Fév', 'revenue' => 380],
+                        ['month' => 'Mar', 'revenue' => 420],
+                        ['month' => 'Avr', 'revenue' => 465],
+                        ['month' => 'Mai', 'revenue' => 485],
+                        ['month' => 'Jun', 'revenue' => 520],
+                    ]
+                ],
+                'bookings' => [
+                    'total' => 1247,
+                    'thisMonth' => 89,
+                    'growth' => 8.3,
+                    'chartData' => [
+                        ['month' => 'Jan', 'bookings' => 67],
+                        ['month' => 'Fév', 'bookings' => 73],
+                        ['month' => 'Mar', 'bookings' => 81],
+                        ['month' => 'Avr', 'bookings' => 85],
+                        ['month' => 'Mai', 'bookings' => 89],
+                        ['month' => 'Jun', 'bookings' => 92],
+                    ]
+                ],
+                'topVehicles' => [
+                    ['name' => 'Toyota Corolla', 'bookings' => 45, 'revenue' => 125000],
+                    ['name' => 'Honda CR-V', 'bookings' => 38, 'revenue' => 108000],
+                    ['name' => 'Toyota RAV4', 'bookings' => 35, 'revenue' => 142000],
+                    ['name' => 'Mercedes Classe C', 'bookings' => 29, 'revenue' => 185000],
+                    ['name' => 'Toyota Land Cruiser', 'bookings' => 22, 'revenue' => 165000],
+                ]
+            ];
+            
+            return response()->json($analytics);
+        } catch (\Exception $e) {
+            return response()->json([
+                'error' => 'Erreur lors du chargement des analytics',
+                'message' => $e->getMessage()
+            ], 500);
+        }
     });
 });
 
