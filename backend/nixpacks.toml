@@ -1,10 +1,17 @@
 [variables]
 APP_ENV = "production"
 APP_DEBUG = "false"  
-DB_CONNECTION = "sqlite"
+DB_CONNECTION = "pgsql"
+DB_HOST = "${SUPABASE_DB_HOST}"
+DB_PORT = "${SUPABASE_DB_PORT}"
+DB_DATABASE = "${SUPABASE_DB_DATABASE}"
+DB_USERNAME = "${SUPABASE_DB_USERNAME}"
+DB_PASSWORD = "${SUPABASE_DB_PASSWORD}"
+APP_URL = "https://senerentcar-production.up.railway.app"
+FRONTEND_URL = "https://senerentcar.vercel.app"
 
 [phases.setup]
-nixPkgs = ["php82", "php82Extensions.pdo_sqlite", "php82Extensions.mbstring", "php82Extensions.gd", "php82Extensions.zip", "php82Extensions.bcmath", "composer"]
+nixPkgs = ["php82", "php82Extensions.pdo_pgsql", "php82Extensions.mbstring", "php82Extensions.gd", "php82Extensions.zip", "php82Extensions.bcmath", "composer"]
 
 [phases.install]
 cmds = [
