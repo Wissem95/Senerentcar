@@ -17,6 +17,11 @@ return Application::configure(basePath: dirname(__DIR__))
             'permission' => \App\Http\Middleware\PermissionMiddleware::class,
         ]);
         
+        // Enable CORS globally
+        $middleware->use([
+            \Illuminate\Http\Middleware\HandleCors::class,
+        ]);
+        
         // Enable CORS for all routes
         $middleware->web(prepend: [
             \Illuminate\Http\Middleware\HandleCors::class,

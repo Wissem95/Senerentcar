@@ -9,7 +9,7 @@ class ApiClient {
   constructor() {
     this.client = axios.create({
       baseURL: API_BASE_URL,
-      timeout: 10000,
+      timeout: 30000, // 30 secondes pour Railway cold start
       headers: {
         'Content-Type': 'application/json',
         'Accept': 'application/json',
@@ -57,8 +57,21 @@ class ApiClient {
   }
 
   async get<T>(url: string, config?: AxiosRequestConfig): Promise<ApiResponse<T>> {
-    const response: AxiosResponse<ApiResponse<T>> = await this.client.get(url, config)
-    return response.data
+    try {
+      const response: AxiosResponse<ApiResponse<T>> = await this.client.get(url, config)
+      return response.data
+    } catch (error: any) {
+      // Retry pour cold start Railway
+      if (error.code === 'ECONNABORTED' || error.code === 'ETIMEDOUT') {
+        console.log('Retry après timeout - cold start possible...')
+        const response: AxiosResponse<ApiResponse<T>> = await this.client.get(url, { 
+          ...config, 
+          timeout: 45000 // 45 secondes pour le retry
+        })
+        return response.data
+      }
+      throw error
+    }
   }
 
   async post<T>(url: string, data?: unknown, config?: AxiosRequestConfig): Promise<ApiResponse<T>> {
