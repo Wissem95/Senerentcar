@@ -19,12 +19,7 @@ return [
 
     'allowed_methods' => ['*'],
 
-    'allowed_origins' => [
-        'http://localhost:3000', 
-        'https://senerentcar.vercel.app', 
-        'https://senerentcar-dzl6d6fy9-wissem95s-projects.vercel.app',
-        'https://*.vercel.app'
-    ],
+    'allowed_origins' => ['*'],
 
     'allowed_origins_patterns' => ['https://*.vercel.app'],
 
