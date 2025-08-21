@@ -62,17 +62,17 @@ const milestones = [
   {
     year: "2020",
     title: "Création de Senerentcar",
-    description: "Lancement de la première plateforme de location de véhicules 100% sénégalaise"
+    description: "Lancement de la première plateforme de location de véhicules 100% sénégalaise et cap-verdienne"
   },
   {
     year: "2021", 
-    title: "Expansion Dakar",
-    description: "Ouverture de 3 agences à Dakar et constitution d'une flotte de 50 véhicules"
+    title: "Expansion Dakar et Praia",
+    description: "Ouverture de 3 agences à Dakar et à Praia et constitution d'une flotte de 50 véhicules"
   },
   {
     year: "2022",
     title: "Couverture nationale",
-    description: "Extension à Thiès et Saint-Louis, partenariats avec hôtels et agences de voyage"
+    description: "Extension à Thiès, Saint-Louis, Santiago et Boa Vista, partenariats avec hôtels et agences de voyage"
   },
   {
     year: "2023",
@@ -136,22 +136,22 @@ export default function AboutPage() {
     <MainLayout>
       <div className="min-h-screen">
         {/* Hero Section */}
-        <section className="relative py-24 bg-gradient-to-r from-senegal-green via-senegal-yellow to-senegal-red overflow-hidden">
+        <section className="overflow-hidden relative py-24 bg-gradient-to-r from-senegal-green via-senegal-yellow to-senegal-red">
           <div className="absolute inset-0 bg-black/20" />
-          <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+          <div className="relative px-4 mx-auto max-w-7xl text-center sm:px-6 lg:px-8">
             <motion.div
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.8 }}
             >
-              <h1 className="text-4xl md:text-6xl font-bold text-white mb-6">
+              <h1 className="mb-6 text-4xl font-bold text-white md:text-6xl">
                 À propos de Senerentcar
               </h1>
-              <p className="text-xl md:text-2xl text-white/90 max-w-3xl mx-auto mb-8">
-                La première plateforme de location de véhicules 100% sénégalaise, 
+              <p className="mx-auto mb-8 max-w-3xl text-xl md:text-2xl text-white/90">
+                La première plateforme de location de véhicules 100% sénégalaise et cap-verdienne, 
                 créée par des Sénégalais pour les Sénégalais et leurs invités.
               </p>
-              <div className="flex flex-wrap justify-center gap-4">
+              <div className="flex flex-wrap gap-4 justify-center">
                 {stats.map((stat, index) => (
                   <motion.div
                     key={stat.label}
@@ -160,9 +160,9 @@ export default function AboutPage() {
                     transition={{ delay: 0.2 + index * 0.1 }}
                     className="bg-white/10 backdrop-blur-sm rounded-lg p-6 min-w-[150px]"
                   >
-                    <stat.icon className="w-8 h-8 text-white mx-auto mb-2" />
+                    <stat.icon className="mx-auto mb-2 w-8 h-8 text-white" />
                     <div className="text-2xl font-bold text-white">{stat.value}</div>
-                    <div className="text-white/80 text-sm">{stat.label}</div>
+                    <div className="text-sm text-white/80">{stat.label}</div>
                   </motion.div>
                 ))}
               </div>
@@ -172,41 +172,41 @@ export default function AboutPage() {
 
         {/* Mission Section */}
         <section className="py-20 bg-white">
-          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
+          <div className="px-4 mx-auto max-w-7xl sm:px-6 lg:px-8">
+            <div className="grid grid-cols-1 gap-12 items-center lg:grid-cols-2">
               <motion.div
                 initial={{ opacity: 0, x: -20 }}
                 whileInView={{ opacity: 1, x: 0 }}
                 transition={{ duration: 0.8 }}
               >
-                <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-6">
+                <h2 className="mb-6 text-3xl font-bold text-gray-900 md:text-4xl">
                   Notre Mission
                 </h2>
-                <p className="text-lg text-gray-600 mb-6">
-                  Démocratiser l'accès à la location de véhicules au Sénégal en proposant 
+                <p className="mb-6 text-lg text-gray-600">
+                  Démocratiser l'accès à la location de véhicules au Sénégal et au Cap-Vert en proposant 
                   une solution moderne, accessible et transparente. Nous croyons que chaque 
                   Sénégalais doit pouvoir se déplacer librement et découvrir les merveilles 
                   de notre beau pays.
                 </p>
-                <p className="text-lg text-gray-600 mb-8">
+                <p className="mb-8 text-lg text-gray-600">
                   Chez Senerentcar, nous combinons la technologie moderne avec l'hospitalité 
                   traditionnelle sénégalaise (Teranga) pour offrir une expérience unique 
                   de location automobile.
                 </p>
                 <div className="grid grid-cols-2 gap-4">
-                  <div className="flex items-center gap-3">
+                  <div className="flex gap-3 items-center">
                     <CheckCircle className="w-5 h-5 text-senegal-green" />
                     <span>Service 24h/7j</span>
                   </div>
-                  <div className="flex items-center gap-3">
+                  <div className="flex gap-3 items-center">
                     <CheckCircle className="w-5 h-5 text-senegal-green" />
                     <span>Tarifs transparents</span>
                   </div>
-                  <div className="flex items-center gap-3">
+                  <div className="flex gap-3 items-center">
                     <CheckCircle className="w-5 h-5 text-senegal-green" />
                     <span>Véhicules récents</span>
                   </div>
-                  <div className="flex items-center gap-3">
+                  <div className="flex gap-3 items-center">
                     <CheckCircle className="w-5 h-5 text-senegal-green" />
                     <span>Assurance complète</span>
                   </div>
@@ -224,9 +224,9 @@ export default function AboutPage() {
                   alt="Véhicules Senerentcar au Sénégal"
                   width={600}
                   height={400}
-                  className="rounded-2xl shadow-2xl object-cover"
+                  className="object-cover rounded-2xl shadow-2xl"
                 />
-                <div className="absolute -bottom-6 -left-6 bg-senegal-green text-white p-6 rounded-xl">
+                <div className="absolute -bottom-6 -left-6 p-6 text-white rounded-xl bg-senegal-green">
                   <div className="text-2xl font-bold">100%</div>
                   <div className="text-sm">Satisfaction client</div>
                 </div>
@@ -237,21 +237,21 @@ export default function AboutPage() {
 
         {/* Values Section */}
         <section className="py-20 bg-gray-50">
-          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="px-4 mx-auto max-w-7xl sm:px-6 lg:px-8">
             <motion.div
               initial={{ opacity: 0, y: 20 }}
               whileInView={{ opacity: 1, y: 0 }}
-              className="text-center mb-16"
+              className="mb-16 text-center"
             >
-              <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4">
+              <h2 className="mb-4 text-3xl font-bold text-gray-900 md:text-4xl">
                 Nos Valeurs
               </h2>
-              <p className="text-lg text-gray-600 max-w-2xl mx-auto">
+              <p className="mx-auto max-w-2xl text-lg text-gray-600">
                 Les principes qui guident notre action quotidienne pour servir au mieux nos clients
               </p>
             </motion.div>
 
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+            <div className="grid grid-cols-1 gap-8 md:grid-cols-2 lg:grid-cols-4">
               {values.map((value, index) => (
                 <motion.div
                   key={value.title}
@@ -259,12 +259,12 @@ export default function AboutPage() {
                   whileInView={{ opacity: 1, y: 0 }}
                   transition={{ delay: index * 0.1 }}
                 >
-                  <Card className="h-full text-center hover:shadow-lg transition-shadow">
+                  <Card className="h-full text-center transition-shadow hover:shadow-lg">
                     <CardContent className="p-8">
-                      <div className="w-16 h-16 bg-senegal-green/10 rounded-full flex items-center justify-center mx-auto mb-6">
+                      <div className="flex justify-center items-center mx-auto mb-6 w-16 h-16 rounded-full bg-senegal-green/10">
                         <value.icon className="w-8 h-8 text-senegal-green" />
                       </div>
-                      <h3 className="text-xl font-bold text-gray-900 mb-4">{value.title}</h3>
+                      <h3 className="mb-4 text-xl font-bold text-gray-900">{value.title}</h3>
                       <p className="text-gray-600">{value.description}</p>
                     </CardContent>
                   </Card>
@@ -276,21 +276,21 @@ export default function AboutPage() {
 
         {/* Team Section */}
         <section className="py-20 bg-white">
-          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="px-4 mx-auto max-w-7xl sm:px-6 lg:px-8">
             <motion.div
               initial={{ opacity: 0, y: 20 }}
               whileInView={{ opacity: 1, y: 0 }}
-              className="text-center mb-16"
+              className="mb-16 text-center"
             >
-              <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4">
+              <h2 className="mb-4 text-3xl font-bold text-gray-900 md:text-4xl">
                 Notre Équipe
               </h2>
-              <p className="text-lg text-gray-600 max-w-2xl mx-auto">
+              <p className="mx-auto max-w-2xl text-lg text-gray-600">
                 Des professionnels passionnés, dédiés à votre satisfaction
               </p>
             </motion.div>
 
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+            <div className="grid grid-cols-1 gap-8 md:grid-cols-2 lg:grid-cols-4">
               {teamMembers.map((member, index) => (
                 <motion.div
                   key={member.name}
@@ -298,19 +298,19 @@ export default function AboutPage() {
                   whileInView={{ opacity: 1, y: 0 }}
                   transition={{ delay: index * 0.1 }}
                 >
-                  <Card className="overflow-hidden hover:shadow-lg transition-shadow">
-                    <div className="aspect-square overflow-hidden">
+                  <Card className="overflow-hidden transition-shadow hover:shadow-lg">
+                    <div className="overflow-hidden aspect-square">
                       <img
                         src={member.image}
                         alt={member.name}
-                        className="w-full h-full object-cover hover:scale-105 transition-transform duration-300"
+                        className="object-cover w-full h-full transition-transform duration-300 hover:scale-105"
                         style={member.imageStyle}
                       />
                     </div>
                     <CardContent className="p-6 text-center">
-                      <h3 className="text-xl font-bold text-gray-900 mb-2">{member.name}</h3>
+                      <h3 className="mb-2 text-xl font-bold text-gray-900">{member.name}</h3>
                       <Badge className="mb-4">{member.role}</Badge>
-                      <p className="text-gray-600 text-sm">{member.description}</p>
+                      <p className="text-sm text-gray-600">{member.description}</p>
                     </CardContent>
                   </Card>
                 </motion.div>
@@ -321,22 +321,22 @@ export default function AboutPage() {
 
         {/* Timeline Section */}
         <section className="py-20 bg-gray-50">
-          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="px-4 mx-auto max-w-7xl sm:px-6 lg:px-8">
             <motion.div
               initial={{ opacity: 0, y: 20 }}
               whileInView={{ opacity: 1, y: 0 }}
-              className="text-center mb-16"
+              className="mb-16 text-center"
             >
-              <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4">
+              <h2 className="mb-4 text-3xl font-bold text-gray-900 md:text-4xl">
                 Notre Histoire
               </h2>
-              <p className="text-lg text-gray-600 max-w-2xl mx-auto">
-                4 années de croissance et d'innovation au service de la mobilité sénégalaise
+              <p className="mx-auto max-w-2xl text-lg text-gray-600">
+                4 années de croissance et d'innovation au service de la mobilité sénégalaise et cap-verdienne
               </p>
             </motion.div>
 
             <div className="relative">
-              <div className="absolute left-1/2 transform -translate-x-1/2 w-1 bg-senegal-green h-full"></div>
+              <div className="absolute left-1/2 w-1 h-full transform -translate-x-1/2 bg-senegal-green"></div>
               <div className="space-y-12">
                 {milestones.map((milestone, index) => (
                   <motion.div
@@ -346,10 +346,10 @@ export default function AboutPage() {
                     transition={{ delay: index * 0.2 }}
                     className={`flex items-center ${index % 2 === 0 ? 'flex-row' : 'flex-row-reverse'}`}
                   >
-                    <div className="w-1/2 px-8">
+                    <div className="px-8 w-1/2">
                       <Card className="p-6">
-                        <div className="flex items-center gap-4 mb-4">
-                          <div className="w-12 h-12 bg-senegal-green text-white rounded-full flex items-center justify-center font-bold">
+                        <div className="flex gap-4 items-center mb-4">
+                          <div className="flex justify-center items-center w-12 h-12 font-bold text-white rounded-full bg-senegal-green">
                             {milestone.year}
                           </div>
                           <h3 className="text-xl font-bold text-gray-900">{milestone.title}</h3>
@@ -357,7 +357,7 @@ export default function AboutPage() {
                         <p className="text-gray-600">{milestone.description}</p>
                       </Card>
                     </div>
-                    <div className="w-4 h-4 bg-senegal-green rounded-full relative z-10"></div>
+                    <div className="relative z-10 w-4 h-4 rounded-full bg-senegal-green"></div>
                     <div className="w-1/2"></div>
                   </motion.div>
                 ))}
@@ -368,21 +368,21 @@ export default function AboutPage() {
 
         {/* Certifications Section */}
         <section className="py-20 bg-white">
-          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="px-4 mx-auto max-w-7xl sm:px-6 lg:px-8">
             <motion.div
               initial={{ opacity: 0, y: 20 }}
               whileInView={{ opacity: 1, y: 0 }}
-              className="text-center mb-16"
+              className="mb-16 text-center"
             >
-              <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4">
+              <h2 className="mb-4 text-3xl font-bold text-gray-900 md:text-4xl">
                 Certifications & Partenariats
               </h2>
-              <p className="text-lg text-gray-600 max-w-2xl mx-auto">
+              <p className="mx-auto max-w-2xl text-lg text-gray-600">
                 Reconnus par les institutions sénégalaises pour notre excellence
               </p>
             </motion.div>
 
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+            <div className="grid grid-cols-1 gap-8 md:grid-cols-3">
               {certifications.map((cert, index) => (
                 <motion.div
                   key={cert.name}
@@ -390,10 +390,10 @@ export default function AboutPage() {
                   whileInView={{ opacity: 1, y: 0 }}
                   transition={{ delay: index * 0.1 }}
                 >
-                  <Card className="p-6 text-center hover:shadow-lg transition-shadow">
-                    <Award className="w-12 h-12 text-senegal-green mx-auto mb-4" />
-                    <h3 className="text-lg font-bold text-gray-900 mb-2">{cert.name}</h3>
-                    <p className="text-gray-600 text-sm">{cert.description}</p>
+                  <Card className="p-6 text-center transition-shadow hover:shadow-lg">
+                    <Award className="mx-auto mb-4 w-12 h-12 text-senegal-green" />
+                    <h3 className="mb-2 text-lg font-bold text-gray-900">{cert.name}</h3>
+                    <p className="text-sm text-gray-600">{cert.description}</p>
                   </Card>
                 </motion.div>
               ))}
@@ -403,18 +403,18 @@ export default function AboutPage() {
 
         {/* Contact CTA Section */}
         <section className="py-20 bg-gradient-to-r from-senegal-green to-senegal-yellow">
-          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+          <div className="px-4 mx-auto max-w-7xl text-center sm:px-6 lg:px-8">
             <motion.div
               initial={{ opacity: 0, y: 20 }}
               whileInView={{ opacity: 1, y: 0 }}
             >
-              <h2 className="text-3xl md:text-4xl font-bold text-white mb-6">
-                Prêt à découvrir le Sénégal ?
+              <h2 className="mb-6 text-3xl font-bold text-white md:text-4xl">
+                Prêt à découvrir le Sénégal et le Cap-Vert ?
               </h2>
-              <p className="text-xl text-white/90 mb-8 max-w-2xl mx-auto">
-                Rejoignez les milliers de Sénégalais qui nous font confiance pour leurs déplacements
+              <p className="mx-auto mb-8 max-w-2xl text-xl text-white/90">
+                Rejoignez les milliers de Sénégalais et Cap-verdien qui nous font confiance pour leurs déplacements
               </p>
-              <div className="flex flex-col sm:flex-row gap-4 justify-center">
+              <div className="flex flex-col gap-4 justify-center sm:flex-row">
                 <Link href="/catalogue">
                   <Button size="lg" className="bg-white text-senegal-green hover:bg-gray-100">
                     <Car className="mr-2 w-5 h-5" />
@@ -422,27 +422,27 @@ export default function AboutPage() {
                   </Button>
                 </Link>
                 <Link href="/contact">
-                  <Button size="lg" variant="outline" className="border-white text-white hover:bg-white hover:text-senegal-green">
+                  <Button size="lg" variant="outline" className="text-white border-white hover:bg-white hover:text-senegal-green">
                     <Phone className="mr-2 w-5 h-5" />
                     Nous contacter
                   </Button>
                 </Link>
               </div>
               
-              <div className="mt-12 grid grid-cols-1 md:grid-cols-3 gap-8 text-white">
+              <div className="grid grid-cols-1 gap-8 mt-12 text-white md:grid-cols-3">
                 <div>
-                  <MapPin className="w-8 h-8 mx-auto mb-4" />
-                  <h4 className="font-bold mb-2">Nos Agences</h4>
-                  <p className="text-white/80">Dakar • Thiès • Saint-Louis</p>
+                  <MapPin className="mx-auto mb-4 w-8 h-8" />
+                  <h4 className="mb-2 font-bold">Nos Agences</h4>
+                  <p className="text-white/80">Dakar • Thiès • Saint-Louis • Praia • Santiago • Boa Vista </p>
                 </div>
                 <div>
-                  <Clock className="w-8 h-8 mx-auto mb-4" />
-                  <h4 className="font-bold mb-2">Support 24h/7j</h4>
+                  <Clock className="mx-auto mb-4 w-8 h-8" />
+                  <h4 className="mb-2 font-bold">Support 24h/7j</h4>
                   <p className="text-white/80">+221 33 123 45 67</p>
                 </div>
                 <div>
-                  <Mail className="w-8 h-8 mx-auto mb-4" />
-                  <h4 className="font-bold mb-2">Email</h4>
+                  <Mail className="mx-auto mb-4 w-8 h-8" />
+                  <h4 className="mb-2 font-bold">Email</h4>
                   <p className="text-white/80">contact@senerentcar.sn</p>
                 </div>
               </div>
